@@ -57,3 +57,15 @@ def counter():
 @app.route("/info")
 def info():
     return redirect("/autor")
+
+@app.route('/lab1/created')
+def created():
+    return '''
+<!doctype html>
+<html>
+    <body>
+        <h1>Создано успешно</h1>
+       <div><i>что-то создано....</i></div>
+    </body>
+</html>
+''', 201
