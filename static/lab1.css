@@ -1,0 +1,18 @@
+body {
+    background-color: #91ccff; /* Светло-голубой фон */
+    color: #3f0048; /* Темно-серый цвет текста */
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    color: #09014a; /* Темно-бирюзовый цвет заголовка */
+}
+
+img {
+    width: 500px; /* Ширина изображения */
+    height: auto; /* Автоматическая высота, чтобы сохранить пропорции */
+    border: 5px solid #7464ff; /* Темно-бирюзовый бордер */
+    border-radius: 10px; /* Скругленные углы */
+    margin-top: 20px; /* Отступ сверху */
+}
