@@ -6,13 +6,43 @@ app = Flask(__name__)
 def web():
     return """<!doctype html>
         <html>
+            <head>
+                <title>НГТУ, ФБ, Лабораторные работы</title>
+            </head>
             <body>
+                <h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
+            <ul>
+                <li><a href="/lab1">Первая лабораторная</a></li>
+            </ul>
                 <h1>Web-сервер на flask</h1>
             <a href="/lab1/autor">autor</a>
             </body>
+            <footer>
+                ФИО: Репьюк Екатерина Дмитриевна, Группа: ФБИ-22, Курс: 3, Год: 2024
+            </footer>
         </html>""", 200, {"X-Server": "sample",
                           'Content-Type': 'text/plan; charset=utf-8'
                           }
+
+@app.route('/index')
+def index():
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>НГТУ, ФБ, Лабораторные работы</title>
+    </head>
+    <body>
+        <h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
+        <ul>
+            <li><a href="/lab1">Первая лабораторная</a></li>
+        </ul>
+        <footer>
+             ФИО: Репьюк Екатерина Дмитриевна, Группа: ФБИ-22, Курс: 3, Год: 2024
+        </footer>
+    </body>
+</html>
+'''
 
 @app.route("/lab1/autor")
 def author():
