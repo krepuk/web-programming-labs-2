@@ -233,3 +233,29 @@ def error_418():
     </body>
 </html>
 ''', 418
+
+@app.route('/lab1/trigger_error')
+def null_error():
+    result = 1 / 0
+    return str(result)
+
+@app.errorhandler(500)
+def server_error(e):
+    css_path = url_for("static", filename="404.css")
+    return f'''
+<!doctype html>
+<html>
+    <head>
+        <title>Ошибка 500</title>
+        <link rel="stylesheet" type="text/css" href="{css_path}">
+    </head>
+    <body>
+        <div class="error-container">
+            <h1>Ошибка 500</h1>
+            <p>P.S. На ноль делить нельзя</p>
+        </div>
+    </body>
+</html>
+''', 500
+
+
