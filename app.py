@@ -121,7 +121,25 @@ def created():
 
 @app.errorhandler(404)
 def not_found(err):
-    return "нет такой страницы", 404
+    path = url_for("static", filename="404.jpg")
+    css_path = url_for("static", filename="404.css")
+    return f'''
+<!doctype html>
+<html>
+    <head>
+        <title>404 Страница не найдена</title>
+        <link rel="stylesheet" type="text/css" href="{ css_path }">
+    </head>
+    <body>
+        <div class="error-container">
+            <h1>404 Страница не найдена</h1>
+            <p>Извините, кажется эта страница не найдена</p>
+            <p>Возможно, страница еще не создана или ее украли;)</p>
+            <img src="{path}">
+        </div>
+    </body>
+</html>
+''', 404
 
 @app.route('/lab1')
 def lab1():
@@ -210,7 +228,7 @@ def error_418():
 <!doctype html>
 <html>
     <body>
-        <h1>418 I'm a teapot</h1>
+        <h1>Ошибка</h1>
         <p>Cервер не может приготовить кофе, потому что он чайник</p>
     </body>
 </html>

@@ -1,0 +1,27 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ff9dd8;
+    color: #4e022a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-container {
+    text-align: center;
+    background-color: #ffe2f8;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.error-container h1 {
+    color: #3e013a;
+    margin-bottom: 20px;
+}
+
+.error-container p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #2e013e;
+}
+
