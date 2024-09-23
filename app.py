@@ -141,92 +141,77 @@ def lab1():
 </html>
 '''
 
-@app.route('/error/400')
+@app.route('/lab1/error/400')
 def error_400():
     return '''
 <!doctype html>
 <html>
-    <head>
-        <title>Код 400</title>
-    </head>
     <body>
-        <h1>400 Bad Request</h1>
-        <p>Сервер не может или не будет обрабатывать запрос из-за очевидной ошибки клиента.</p>
+        <h1>Ошибка 400</h1>
+        <p>Допущена опечатка в ссылке</p>
     </body>
 </html>
 ''', 400
 
-@app.route('/error/401')
+@app.route('/lab1/error/401')
 def error_401():
     return '''
 <!doctype html>
 <html>
-    <head>
-        <title>Код 401</title>
-    </head>
     <body>
-        <h1>401 Unauthorized</h1>
-        <p>Запрос не был применен, так как отсутствуют действительные учетные данные для целевого ресурса.</p>
+        <h1>Ошибка 401</h1>
+        <p>Проблема с аутентификацией или авторизацией на сайте</p>
     </body>
 </html>
 ''', 401
 
-@app.route('/error/402')
+@app.route('/lab1/error/402')
 def error_402():
     return '''
 <!doctype html>
 <html>
     <head>
-        <title>Код 402</title>
+        <title>402 Payment Required</title>
     </head>
     <body>
-        <h1>402 Payment Required</h1>
-        <p>Этот код зарезервирован для будущего использования.</p>
+        <h1>Ошибка 402</h1>
+        <p>Нестандартная ошибка клиента, зарезервированная для использования в будущем</p>
     </body>
 </html>
 ''', 402
 
-@app.route('/error/403')
+@app.route('/lab1/error/403')
 def error_403():
     return '''
 <!doctype html>
 <html>
-    <head>
-        <title>Код 403</title>
-    </head>
     <body>
-        <h1>403 Forbidden</h1>
-        <p>У клиента нет прав доступа к содержимому, поэтому сервер отказывается дать надлежащий ответ.</p>
+        <h1>Ошибка 403</h1>
+        <p>Доступ к запрашиваемой странице запрещен или у пользователя нет прав на просмотр контента</p>
     </body>
 </html>
 ''', 403
 
-@app.route('/error/405')
+@app.route('/lab1/error/405')
 def error_405():
     return '''
 <!doctype html>
 <html>
-    <head>
-        <title>Код 405</title>
-    </head>
     <body>
-        <h1>405 Method Not Allowed</h1>
-        <p>Метод, указанный в запросе, не разрешен для указанного ресурса.</p>
+        <h1>Ошибка 405</h1>
+        <p>Mетод HTTP не разрешен веб-сервером для запрошенного URL-адреса</p>
     </body>
 </html>
 ''', 405
 
-@app.route('/error/418')
+@app.route('/lab1/error/418')
 def error_418():
     return '''
 <!doctype html>
 <html>
-    <head>
-        <title>Код 418</title>
-    </head>
     <body>
         <h1>418 I'm a teapot</h1>
-        <p>Сервер отказывается варить кофе, потому что является чайником.</p>
+        <p>Cервер не может приготовить кофе, потому что он чайник</p>
     </body>
 </html>
 ''', 418
