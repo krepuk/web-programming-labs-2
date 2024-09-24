@@ -258,4 +258,31 @@ def server_error(e):
 </html>
 ''', 500
 
+@app.route('/lab1/my_route')
+def my_route():
+    css_path = url_for("static", filename="custom_route.css")
+    img_path = url_for("static", filename="custom_route.jpg")
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>Мой новый роут</title>
+        <link rel="stylesheet" type="text/css" href="{{ css_path }}">
+    </head>
+    <body>
+        <div class="content-container">
+            <h1>Мой новый роут</h1>
+            <p></p>
+            <p></p>
+            <p></p>
+            <img src="{img_path}" alt="Custom Route Image" class="content-image">
+        </div>
+    </body>
+</html>
+''', 200, {
+        'Content-Language': 'ru',
+        'X-Custom-Header-1': 'Custom Value 1',
+        'X-Custom-Header-2': 'Custom Value 2'
+    }
+
 
