@@ -7,6 +7,13 @@ body {
     align-items: center;
 }
 
+header {
+    color: #220436;
+    font-family: Arial, sans-serif;
+    margin-bottom: 10px;
+    background-color: #ff9dd8;
+}
+
 .error-container {
     text-align: center;
     background-color: #ffe2f8;

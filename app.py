@@ -260,29 +260,27 @@ def server_error(e):
 
 @app.route('/lab1/my_route')
 def my_route():
-    css_path = url_for("static", filename="custom_route.css")
-    img_path = url_for("static", filename="custom_route.jpg")
+    css_path = url_for("static", filename="404.css")
+    path = url_for("static", filename="cat.jpg")
     return '''
 <!doctype html>
 <html>
     <head>
-        <title>Мой новый роут</title>
-        <link rel="stylesheet" type="text/css" href="{{ css_path }}">
+        <title>Новый роут</title>
+        <link rel="stylesheet" type="text/css" href="{css_path}">
     </head>
     <body>
+        <header>*Что-то на программистком*</header>
         <div class="content-container">
-            <h1>Мой новый роут</h1>
-            <p></p>
-            <p></p>
-            <p></p>
-            <img src="{img_path}" alt="Custom Route Image" class="content-image">
+            <h1>Языки программирования</h1>
+            <p>Python (МФА: [ˈpʌɪθ(ə)n]; в русском языке встречаются названия пито́н или па́йтон) — мультипарадигмальный высокоуровневый язык программирования общего назначения с динамической строгой типизацией и автоматическим управлением памятью, ориентированный на повышение производительности разработчика, читаемости кода и его качества, а также на обеспечение переносимости написанных на нём программ. Язык является полностью объектно-ориентированным в том плане, что всё является объектами.</p>
+            <p>JavaScript это язык, который позволяет вам применять сложные вещи на web странице — каждый раз, когда на web странице происходит что-то большее, чем просто её статичное отображение — отображение периодически обновляемого контента, или интерактивных карт, или анимация 2D/3D графики, или прокрутка видео в проигрывателе, и т.д. — можете быть уверены, что скорее всего, не обошлось без JavaScript.</p>
+            <p>C++ — это язык программирования, который был разработан в 80-х годах прошлого века как расширение языка C. Этот язык отличается от Си тем, что имеет больший набор возможностей, включая объектно-ориентированное программирование и шаблоны.</p>
+            <img src="{path}">
         </div>
     </body>
 </html>
-''', 200, {
-        'Content-Language': 'ru',
-        'X-Custom-Header-1': 'Custom Value 1',
-        'X-Custom-Header-2': 'Custom Value 2'
+'''.format(css_path=css_path, path=path), 200, {
+        'Content-Language': 'ru', 'en'
+        'Content-Length': '1348'
     }
-
-
