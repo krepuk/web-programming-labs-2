@@ -20,8 +20,7 @@ def web():
             <footer>
                 ФИО: Репьюк Екатерина Дмитриевна, Группа: ФБИ-22, Курс: 3, Год: 2024
             </footer>
-        </html>""", 200, {"X-Server": "sample",
-                          'Content-Type': 'text/plan; charset=utf-8'
+        </html>""", 200, {"X-Server": "sample"
                           }
 
 @app.route('/index')
@@ -143,17 +142,37 @@ def not_found(err):
 
 @app.route('/lab1')
 def lab1():
-    return '''
+    css_path = url_for("static", filename="lab1.css")
+    return f'''
 <!doctype html>
 <html>
     <head>
         <title>Лабораторная 1</title>
+        <link rel="stylesheet" type="text/css" href="{ css_path }">
     </head>
     <body>
         <h1>Лабораторная 1</h1>
         <p>
             Flask — фреймворк для создания веб-приложений на языке программирования Python, использующий набор инструментов Werkzeug, а также шаблонизатор Jinja2. Относится к категории так называемых микрофреймворков — минималистичных каркасов веб-приложений, сознательно предоставляющих лишь самые базовые возможности.
         </p>
+        <h2>Список роутов</h2>
+        <ul>
+            <li><a href="/index">Индекс</a></li>
+            <li><a href="/lab1/autor">Данные об авторе</a></li>
+            <li><a href="/lab1/oak">Дуб</a></li>
+            <li><a href="/lab1/counter">Счетчик</a></li>
+            <li><a href="/lab1/clear">Очищение</a></li>
+            <li><a href="/lab1/info">Инфо</a></li>
+            <li><a href="/lab1/created">Что-то создано</a></li>
+            <li><a href="/lab1/error/400">Ошибка 400</a></li>
+            <li><a href="/lab1/error/401">Ошибка 401</a></li>
+            <li><a href="/lab1/error/402">Ошибка 402</a></li>
+            <li><a href="/lab1/error/403">Ошибка 403</a></li>
+            <li><a href="/lab1/error/405">Ошибка 405</a></li>
+            <li><a href="/lab1/error/418">Ошибка 418</a></li>
+            <li><a href="/lab1/trigger_error">Деление на ноль</a></li>
+            <li><a href="/lab1/my_route">Мой роут</a></li>
+        </ul>
         <a href="/">Вернуться на главную</a>
     </body>
 </html>
@@ -228,7 +247,7 @@ def error_418():
 <!doctype html>
 <html>
     <body>
-        <h1>Ошибка</h1>
+        <h1>Ошибка 418</h1>
         <p>Cервер не может приготовить кофе, потому что он чайник</p>
     </body>
 </html>
