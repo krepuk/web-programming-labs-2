@@ -411,3 +411,38 @@ def lab2():
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
     return render_template('filter.html', phrase=phrase)
+
+
+@app.route('/lab2/calc/')
+def calc_redirect():
+    return redirect('/lab2/calc/1/1')
+
+@app.route('/lab2/calc/<int:a>')
+def calc_redirect_a(a):
+    return redirect(f'/lab2/calc/{a}/1')
+
+@app.route('/lab2/calc/<int:a>/<int:b>')
+def calc(a, b):
+    css_path = url_for("static", filename="main.css")
+    sum_result = a + b
+    diff_result = a - b
+    prod_result = a * b
+    div_result = a / b if b != 0 else "Деление на ноль"
+    step_result = a ** b
+    return f'''
+    <!doctype html>
+    <html>
+        <head>
+            <title>Калькулятор</title>
+            <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
+        </head>
+        <body>
+            <h1>Результаты вычислений</h1>
+            <p>Сумма: {a} + {b} = {sum_result}</p>
+            <p>Разность: {a} - {b} = {diff_result}</p>
+            <p>Произведение: {a} * {b} = {prod_result}</p>
+            <p>Деление: {a} / {b} = {div_result}</p>
+            <p>Возведение в степень: {a} ^ {b} = {step_result}</p>
+        </body>
+    </html>
+    '''
