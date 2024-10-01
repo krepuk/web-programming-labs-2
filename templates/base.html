@@ -1,3 +1,4 @@
+{% extends "base.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,8 +10,10 @@
 <body>
     <header>
         WEB-программирование, часть 2. {{ self.lab() }} 
+        <a href="/">Главное меню</a>
     </header>
     <main>
+        <a href="/">Главное меню</a>
         {% block main %}{% endblock %}
     </main>
     <footer>

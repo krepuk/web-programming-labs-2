@@ -14,6 +14,9 @@ def web():
             <ul>
                 <li><a href="/lab1">Первая лабораторная</a></li>
             </ul>
+            <ul>
+                <li><a href="/lab2">Вторая лабораторная</a></li>
+            </ul>
                 <h1>Web-сервер на flask</h1>
             <a href="/lab1/autor">autor</a>
             </body>
@@ -35,6 +38,9 @@ def index():
         <h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
         <ul>
             <li><a href="/lab1">Первая лабораторная</a></li>
+        </ul>
+        <ul>
+            <li><a href="/lab2">Вторая лабораторная</a></li>
         </ul>
         <footer>
              ФИО: Репьюк Екатерина Дмитриевна, Группа: ФБИ-22, Курс: 3, Год: 2024
@@ -405,6 +411,34 @@ def example():
 
 @app.route('/lab2/')
 def lab2():
+    return f'''
+<!doctype html>
+<html>
+    <head>
+        <title>Лабораторная 2</title>
+        <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
+    </head>
+    <body>
+        <h1>Лабораторная 2</h1>
+        <h2>Список роутов</h2>
+        <ul>
+            <li><a href="/lab2/a">А</a></li>
+            <li><a href="/lab2/a/">/А</a></li>
+            <li><a href="/lab2/flowers/<int:flower_id>">Цветок</a></li>
+            <li><a href="/lab2/add_flower/<name>'">Добавить цветок</a></li>
+            <li><a href="/lab2/all_flowers">Все цветы</a></li>
+            <li><a href="/lab2/clear_flowers">Очистить список цветов</a></li>
+            <li><a href="/lab2/example">Пример</a></li>
+            <li><a href="/lab2/calc/">Калькулятор</a></li>
+            <li><a href="/lab2/calc/<int:a>">Калькулятор А</a></li>
+            <li><a href="/lab2/calc/<int:a>/<int:b>">Калькулятор А/B</a></li>
+            <li><a href="/lab2/books">Книги</a></li>
+            <li><a href="/lab2/cats">Котики</a></li>
+        </ul>
+        <a href="/">Вернуться на главную</a>
+    </body>
+</html>
+'''
     return render_template('lab2.html')
 
 @app.route('/lab2/filters')
@@ -436,6 +470,9 @@ def calc(a, b):
             <title>Репьюк Катя</title>
             <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
         </head>
+        <header>
+        <a href="/">Главное меню</a>
+        </header>
         <body>
             <h1>Результаты вычислений</h1>
             <p>Сумма: {a} + {b} = {sum_result}</p>
@@ -464,11 +501,6 @@ books = [
 def books_list():
     return render_template('books.html', books=books)
 
-from flask import Flask, render_template
-
-app = Flask(__name__)
-
-
 cats = [
     {"name": "Британская кошка", "description": "Отличается вредным характером", "image": "cat1.jpg"},
     {"name": "Мейн-кун", "description": "Отличается огромными габаритами", "image": "cat2.jpg"},
@@ -479,5 +511,5 @@ cats = [
 
 @app.route('/lab2/cats')
 def cats_list():
-    return render_template('cats.html', cats=cats)
+   return render_template('cats.html', cats=cats)
 
