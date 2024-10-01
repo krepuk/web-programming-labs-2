@@ -1,4 +1,4 @@
-from flask import Flask, url_for, redirect, render_template
+from flask import Flask, url_for, redirect, render_template, abort
 app = Flask(__name__)
 
 @app.route("/")
@@ -271,7 +271,7 @@ def server_error(e):
     <body>
         <div class="error-container">
             <h1>Ошибка 500</h1>
-            <p>P.S. На ноль делить нельзя</p>
+            <p>P.S. кажется, ошибка в коде </p>
         </div>
     </body>
 </html>
@@ -316,10 +316,22 @@ flower_list = ['роза', 'тюльпан', 'незабудка', 'ромашк
 
 @app.route('/lab2/flowers/<int:flower_id>')
 def flowers(flower_id):
-    if flower_id >= len(flower_list):
-        return "цветок: " + flower_list[flower_id]
-    else:
-        return "цветок: " + flower_list[flower_id]
+        css_path = url_for("static", filename="main.css")
+        if 0 <= flower_id < len(flower_list):
+            flower = flower_list[flower_id]
+        return f'''
+        <!doctype html>
+        <html>
+            <head>
+                <title>Цветок</title>
+                <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
+            </head>
+            <body>
+                <h1>Цветок: {flower}</h1>
+                <p><a href="/lab2/all_flowers">Показать все цветы</a></p>
+            </body>
+        </html>
+        '''
 
 @app.route('/lab2/add_flower/<name>')
 def add_flower(name):
@@ -335,6 +347,47 @@ def add_flower(name):
     </body>
 </html>
 '''
+@app.route('/lab2/add_flower/')
+def flower_f():
+    return 'Вы не задали имя цветка', 400
+
+@app.route('/lab2/all_flowers')
+def all_flowers():
+    css_path = url_for("static", filename="main.css")
+    return f'''
+    <!doctype html>
+    <html>
+        <head>
+            <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
+        </head>
+        <body>
+            <h1>Цветы</h1>
+            <p>Всего цветов: {len(flower_list)}</p>
+            <p>Список цветов: {', '.join(flower_list)}</p>
+            <p><a href="/lab2/clear_flowers">Очистить список цветов</a></p>
+        </body>
+    </html>
+    '''
+
+@app.route('/lab2/clear_flowers')
+def clear_flowers():
+    css_path = url_for("static", filename="main.css")
+    global flower_list
+    flower_list = []
+    return f'''
+    <!doctype html>
+    <html>
+        <head>
+            <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
+        </head>
+        <body>
+            <h1>Список цветов очищен</h1>
+            <p>Всего цветов: {len(flower_list)}</p>
+            <p><a href="/lab2/all_flowers">Показать все цветы</a></p>
+        </body>
+    </html>
+    '''
+
 @app.route('/lab2/example')
 def example():
     number = 2
