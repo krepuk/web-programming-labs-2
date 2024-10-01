@@ -463,3 +463,21 @@ books = [
 @app.route('/lab2/books')
 def books_list():
     return render_template('books.html', books=books)
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+
+cats = [
+    {"name": "Британская кошка", "description": "Отличается вредным характером", "image": "cat1.jpg"},
+    {"name": "Мейн-кун", "description": "Отличается огромными габаритами", "image": "cat2.jpg"},
+    {"name": "Сфинкс", "description": "Отличается отсутствием шерсти", "image": "cat3.jpg"},
+    {"name": "Сиамская кошка", "description": "Имеет отличительную окраску и вредный характер", "image": "cat4.jpg"},
+    {"name": "Персидская кошка", "description": "Имеет плоскую морду", "image": "cat5.jpg"}
+]
+
+@app.route('/lab2/cats')
+def cats_list():
+    return render_template('cats.html', cats=cats)
+
