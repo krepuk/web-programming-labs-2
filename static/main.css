@@ -39,3 +39,21 @@ footer {
     position: fixed;
     bottom: 0; 
 }
+
+div {
+    color: #090c3b;
+}
+   
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+th, td {
+    border: 1px solid #140087;
+    padding: 8px;
+    text-align: left;
+}
+ th {
+    background-color: #9bd7ff;
+}

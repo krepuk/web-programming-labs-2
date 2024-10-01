@@ -433,7 +433,7 @@ def calc(a, b):
     <!doctype html>
     <html>
         <head>
-            <title>Калькулятор</title>
+            <title>Репьюк Катя</title>
             <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
         </head>
         <body>
@@ -446,3 +446,20 @@ def calc(a, b):
         </body>
     </html>
     '''
+
+books = [
+    {"author": "Джордж Оруэлл", "title": "1984", "genre": "Научная фантастика", "pages": 328},
+    {"author": "Рэй Брэдбери", "title": "451 градус по Фаренгейту", "genre": "Научная фантастика", "pages": 224},
+    {"author": "Нора Сакавич", "title": "Лисья нора", "genre": "Молодежная литература", "pages": 336},
+    {"author": "Джейн Остин", "title": "Гордость и предубеждение", "genre": "Роман", "pages": 432},
+    {"author": "Михаил Булгаков", "title": "Мастер и Маргарита", "genre": "Фантастика", "pages": 480},
+    {"author": "Эрих Мария Ремарк", "title": "Три товарища", "genre": "Роман", "pages": 480},
+    {"author": "Роулинг Джоан Кэтлин", "title": "Гарри Поттер и философский камень", "genre": "Фэнтези", "pages": 352},
+    {"author": "Лев Толстой", "title": "Война и мир", "genre": "Роман", "pages": 1225},
+    {"author": "Роулинг Джоан Кэтлин", "title": "Гарри Поттер и Тайная комната", "genre": "фэнтези", "pages": 480},
+    {"author": "Джером Д. Сэлинджер", "title": "Над пропастью во ржи", "genre": "Роман", "pages": 277}
+]
+
+@app.route('/lab2/books')
+def books_list():
+    return render_template('books.html', books=books)
