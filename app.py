@@ -432,6 +432,7 @@ def lab2():
             <li><a href="/lab2/all_flowers">Все цветы</a></li>
             <li><a href="/lab2/clear_flowers">Очистить список цветов</a></li>
             <li><a href="/lab2/example">Пример</a></li>
+            <li><a href="/lab2/filters">Фильтры</a></li>
             <li><a href="/lab2/calc/">Калькулятор</a></li>
             <li><a href="/lab2/calc/<int:a>">Калькулятор А</a></li>
             <li><a href="/lab2/calc/<int:a>/<int:b>">Калькулятор А/B</a></li>
