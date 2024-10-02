@@ -473,6 +473,7 @@ def calc(a, b):
             <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
         </head>
         <header>
+            WEB-программирование, часть 2. Лабораторная работа 2
         <a href="/">Главное меню</a>
         </header>
         <body>
@@ -483,6 +484,9 @@ def calc(a, b):
             <p>Деление: {a} / {b} = {div_result}</p>
             <p>Возведение в степень: {a} ^ {b} = {step_result}</p>
         </body>
+        <footer>
+            &copy; Репьюк Катя, ФБИ-22, 3 курс, 2024
+        </footer>
     </html>
     '''
 
