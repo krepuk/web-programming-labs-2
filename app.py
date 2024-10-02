@@ -259,11 +259,6 @@ def error_418():
 </html>
 ''', 418
 
-@app.route('/lab1/trigger_error')
-def null_error():
-    result = 1 / 0
-    return str(result)
-
 @app.errorhandler(500)
 def server_error(e):
     css_path = url_for("static", filename="404.css")
@@ -272,7 +267,7 @@ def server_error(e):
 <html>
     <head>
         <title>Ошибка 500</title>
-        <link rel="stylesheet" type="text/css" href="{css_path}">
+        <link rel="stylesheet" type="text/css" href="{ css_path }">
     </head>
     <body>
         <div class="error-container">
@@ -282,6 +277,11 @@ def server_error(e):
     </body>
 </html>
 ''', 500
+
+@app.route('/lab1/trigger_error')
+def null_error():
+        return 1/0
+
 
 @app.route('/lab1/my_route')
 def my_route():
@@ -345,11 +345,14 @@ def add_flower(name):
     return f'''
 <!doctype html>
 <html>
+    <header>
+        <a href="/">Главное меню</a>
+    </header>
     <body>
-    <h1>Добавлен новый цветок</h1>
-    <p>Название нового цветка: {name} </p>
-    <p>Всего цветов: {len(flower_list)}</p>
-    <p>Полный список: {flower_list}</p>
+        <h1>Добавлен новый цветок</h1>
+        <p>Название нового цветка: {name} </p>
+        <p>Всего цветов: {len(flower_list)}</p>
+        <p>Полный список: {flower_list}</p>
     </body>
 </html>
 '''
@@ -439,7 +442,6 @@ def lab2():
     </body>
 </html>
 '''
-    return render_template('lab2.html')
 
 @app.route('/lab2/filters')
 def filters():

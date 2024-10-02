@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Репьюк Катя</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico')}}">
+{% extends "base.html" %}
+
+{% block title %}Список котиков{% endblock %}
+
+{% block additional_styles %}
     <style>
         .cat-card {
             display: flex;
@@ -13,13 +10,14 @@
             align-items: center;
             margin-bottom: 20px;
             padding: 10px;
-            border: 1px solid #ddd;
             border-radius: 5px;
         }
         .cat-card img {
-            max-width: 100%;
-            height: auto;
+            width: 150px; /* Устанавливаем ширину изображения */
+            height: auto; /* Автоматически подстраиваем высоту */
             border-radius: 5px;
+            border: 2px solid #ccc; /* Добавляем рамку */
+            padding: 5px; /* Добавляем отступ внутри рамки */
         }
         .cat-card h2 {
             margin: 10px 0;
@@ -28,23 +26,14 @@
             text-align: center;
         }
     </style>
-</head>
-<body>
-    <header>
-        <h1>Список котиков</h1>
-        <a href="/">Главное меню</a>
-    </header>
-    <main>
-        {% for cat in cats %}
-        <div class="cat-card">
-            <img src="{{ url_for('static', filename=cat.image) }}" alt="{{ cat.name }}">
-            <h2>{{ cat.name }}</h2>
-            <p>{{ cat.description }}</p>
-        </div>
-        {% endfor %}
-    </main>
-    <footer>
-        &copy; Репьюк Катя, ФБИ-22, 3 курс, 2024
-    </footer>
-</body>
-</html>
+{% endblock %}
+
+{% block main %}
+    {% for cat in cats %}
+    <div class="cat-card">
+        <img src="{{ url_for('static', filename=cat.image) }}" alt="{{ cat.name }}">
+        <h2>{{ cat.name }}</h2>
+        <p>{{ cat.description }}</p>
+    </div>
+    {% endfor %}
+{% endblock %}

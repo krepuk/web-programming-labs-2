@@ -26,8 +26,8 @@ main {
     background-color: #d2eeff; 
     border-radius: 10px; 
     box-shadow: 0 0 10px rgba(11, 3, 88, 0.1); 
-    width: 80%; 
-    max-width: 600px; 
+    width: 100%; 
+    max-width: 1000px; 
 }
 
 footer {
@@ -56,4 +56,18 @@ th, td {
 }
  th {
     background-color: #9bd7ff;
+}
+
+
+img{
+    width: 450px; 
+    border-radius: 5px;
+    border: 2px solid #ccc; 
+    padding: 5px;
+}
+h2 {
+            margin: 10px;
+}
+.cat-card {  
+     text-align: center;
 }
