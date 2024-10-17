@@ -1,7 +1,11 @@
 from flask import Flask, url_for, redirect, render_template, abort
-app = Flask(__name__)
+from lab1 import lab1
 
-@app.route("/")
+app = Flask(__name__)
+app.register_blueprint(lab1)
+
+
+@app.route('/')
 @app.route("/lab1/web")
 def web():
     return """<!doctype html>
@@ -26,103 +30,6 @@ def web():
         </html>""", 200, {"X-Server": "sample"
                           }
 
-@app.route('/index')
-def index():
-    return '''
-<!doctype html>
-<html>
-    <head>
-        <title>НГТУ, ФБ, Лабораторные работы</title>
-    </head>
-    <body>
-        <h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
-        <ul>
-            <li><a href="/lab1">Первая лабораторная</a></li>
-        </ul>
-        <ul>
-            <li><a href="/lab2">Вторая лабораторная</a></li>
-        </ul>
-        <footer>
-             ФИО: Репьюк Екатерина Дмитриевна, Группа: ФБИ-22, Курс: 3, Год: 2024
-        </footer>
-    </body>
-</html>
-'''
-
-@app.route("/lab1/autor")
-def author():
-    name = "Репьюк Екатерина Дмитриевна"
-    group = "ФБИ-22"
-    faculty = "ФБ"
-
-    return """<!doctype html>
-        <html>
-            <body>
-                <p>Студент: """ + name + """</p>
-                <p>Группа: """ + group + """</p>
-                <p>Группа: """ + faculty + """</p>
-                <a href="/lab1/web">web</a>
-            </body>
-        </html>"""
-
-@app.route("/lab1/oak")
-def oak():
-    path = url_for("static", filename="oak.jpg")
-    css_path = url_for("static", filename="lab1.css")
-    return f'''
-    <!doctype html>
-        <html>
-            <head>
-                <link rel="stylesheet" type="text/css" href="{css_path}">
-            </head>
-            <body>
-                <h1>Дуб</h1>
-                <img src="{path}">
-            </body>
-        </html>'''
-
-count = 0 
-@app.route('/lab1/counter')
-def counter():
-    global count
-    count += 1 
-    return '''
-<!doctype html>
-<html>
-    <body>
-        <a href="/lab1/clear">Очищение</a>
-        Cколько раз вы сюда заходили: ''' + str(count) + '''
-    </body>
-</html>
-'''
-@app.route('/lab1/clear')
-def clear_counter():
-    global count
-    count = 0
-    return '''
-<!doctype html>
-<html>
-    <body>
-        Счётчик очищен. <a href="/lab1/counter">Вернуться к счётчику</a>
-    </body>
-</html>
-'''
-
-@app.route("/lab1/info")
-def info():
-    return redirect("/lab1/autor")
-
-@app.route('/lab1/created')
-def created():
-    return '''
-<!doctype html>
-<html>
-    <body>
-        <h1>Создано успешно</h1>
-       <div><i>что-то создано....но что непонятно....</i></div>
-    </body>
-</html>
-''', 201
 
 @app.errorhandler(404)
 def not_found(err):
@@ -145,6 +52,7 @@ def not_found(err):
     </body>
 </html>
 ''', 404
+
 
 @app.route('/lab1')
 def lab1():
@@ -184,6 +92,7 @@ def lab1():
 </html>
 '''
 
+
 @app.route('/lab1/error/400')
 def error_400():
     return '''
@@ -196,6 +105,7 @@ def error_400():
 </html>
 ''', 400
 
+
 @app.route('/lab1/error/401')
 def error_401():
     return '''
@@ -207,6 +117,7 @@ def error_401():
     </body>
 </html>
 ''', 401
+
 
 @app.route('/lab1/error/402')
 def error_402():
@@ -223,6 +134,7 @@ def error_402():
 </html>
 ''', 402
 
+
 @app.route('/lab1/error/403')
 def error_403():
     return '''
@@ -234,6 +146,7 @@ def error_403():
     </body>
 </html>
 ''', 403
+
 
 @app.route('/lab1/error/405')
 def error_405():
@@ -247,6 +160,7 @@ def error_405():
 </html>
 ''', 405
 
+
 @app.route('/lab1/error/418')
 def error_418():
     return '''
@@ -258,6 +172,7 @@ def error_418():
     </body>
 </html>
 ''', 418
+
 
 @app.errorhandler(500)
 def server_error(e):
@@ -277,6 +192,7 @@ def server_error(e):
     </body>
 </html>
 ''', 500
+
 
 @app.route('/lab1/trigger_error')
 def null_error():
@@ -310,15 +226,18 @@ def my_route():
         'Content-Length': '1348'
     }
 
+
 @app.route('/lab2/a')
 def a():
     return 'ok'
+
 
 @app.route('/lab2/a/')
 def a2():
     return 'со слэшем'
 
 flower_list = ['роза', 'тюльпан', 'незабудка', 'ромашка']
+
 
 @app.route('/lab2/flowers/<int:flower_id>')
 def flowers(flower_id):
@@ -339,6 +258,7 @@ def flowers(flower_id):
         </html>
         '''
 
+
 @app.route('/lab2/add_flower/<name>')
 def add_flower(name):
     flower_list.append(name)
@@ -356,9 +276,12 @@ def add_flower(name):
     </body>
 </html>
 '''
+
+
 @app.route('/lab2/add_flower/')
 def flower_f():
     return 'Вы не задали имя цветка', 400
+
 
 @app.route('/lab2/all_flowers')
 def all_flowers():
@@ -377,6 +300,7 @@ def all_flowers():
         </body>
     </html>
     '''
+
 
 @app.route('/lab2/clear_flowers')
 def clear_flowers():
@@ -397,6 +321,7 @@ def clear_flowers():
     </html>
     '''
 
+
 @app.route('/lab2/example')
 def example():
     number = 2
@@ -411,6 +336,7 @@ def example():
         {'name': 'манго', 'price': 320}
         ]
     return render_template('example.html', number=number, name=name, group=group, curs=curs, fruits=fruits)
+
 
 @app.route('/lab2/')
 def lab2():
@@ -444,6 +370,7 @@ def lab2():
 </html>
 '''
 
+
 @app.route('/lab2/filters')
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
@@ -454,9 +381,11 @@ def filters():
 def calc_redirect():
     return redirect('/lab2/calc/1/1')
 
+
 @app.route('/lab2/calc/<int:a>')
 def calc_redirect_a(a):
     return redirect(f'/lab2/calc/{a}/1')
+
 
 @app.route('/lab2/calc/<int:a>/<int:b>')
 def calc(a, b):
@@ -504,6 +433,7 @@ books = [
     {"author": "Джером Д. Сэлинджер", "title": "Над пропастью во ржи", "genre": "Роман", "pages": 277}
 ]
 
+
 @app.route('/lab2/books')
 def books_list():
     return render_template('books.html', books=books)
@@ -515,6 +445,7 @@ cats = [
     {"name": "Сиамская кошка", "description": "Имеет отличительную окраску и вредный характер", "image": "cat4.jpg"},
     {"name": "Персидская кошка", "description": "Имеет плоскую морду", "image": "cat5.jpg"}
 ]
+
 
 @app.route('/lab2/cats')
 def cats_list():
