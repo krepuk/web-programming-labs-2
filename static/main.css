@@ -71,3 +71,8 @@ h2 {
 .cat-card {  
      text-align: center;
 }
+
+.error {
+    color: #691801; 
+    font-family: Arial, sans-serif;
+}
