@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block lab %} Лабораторная работа 3 {% endblock %}
+
+{% block main %}
+    <h1 style="color: rgb(0, 99, 76);">Спасибо, ваш заказ оплачен на сумму {{price}} рублей!</h1>
+    <div style="font-size: 1.2em;">Ожидайте доставку в течение часа.</div>
+    <div style="margin-top: 20px;">
+        <a href="/lab3/order" style="padding: 10px 20px; background-color: #5796e3; color: white; text-decoration: none;">Вернуться к заказу</a>
+    </div>
+{% endblock %}
