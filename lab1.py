@@ -2,31 +2,6 @@ from flask import Blueprint, url_for, redirect
 lab1 = Blueprint('lab1', __name__)
 
 
-@lab1.route("/l")
-@lab1.route("/lab1/web")
-def web():
-    return """<!doctype html>
-        <html>
-            <head>
-                <title>НГТУ, ФБ, Лабораторные работы</title>
-            </head>
-            <body>
-                <h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
-            <ul>
-                <li><a href="/lab1">Первая лабораторная</a></li>
-            </ul>
-            <ul>
-                <li><a href="/lab2">Вторая лабораторная</a></li>
-            </ul>
-                <h1>Web-сервер на flask</h1>
-            <a href="/lab1/autor">autor</a>
-            </body>
-            <footer>
-                ФИО: Репьюк Екатерина Дмитриевна, Группа: ФБИ-22, Курс: 3, Год: 2024
-            </footer>
-        </html>""", 200, {"X-Server": "sample"
-                          }
-
 @lab1.route('/index')
 def index():
     return '''
@@ -50,6 +25,7 @@ def index():
 </html>
 '''
 
+
 @lab1.route("/lab1/autor")
 def author():
     name = "Репьюк Екатерина Дмитриевна"
@@ -66,10 +42,11 @@ def author():
             </body>
         </html>"""
 
+
 @lab1.route("/lab1/oak")
 def oak():
-    path = url_for("static", filename="oak.jpg")
-    css_path = url_for("static", filename="lab1.css")
+    path = url_for("static", filename="lab1/oak.jpg")
+    css_path = url_for("static", filename="lab1/lab1.css")
     return f'''
     <!doctype html>
         <html>
@@ -82,7 +59,10 @@ def oak():
             </body>
         </html>'''
 
+
 count = 0 
+
+
 @lab1.route('/lab1/counter')
 def counter():
     global count
@@ -96,6 +76,8 @@ def counter():
     </body>
 </html>
 '''
+
+
 @lab1.route('/lab1/clear')
 def clear_counter():
     global count
@@ -109,9 +91,11 @@ def clear_counter():
 </html>
 '''
 
+
 @lab1.route("/lab1/info")
 def info():
     return redirect("/lab1/autor")
+
 
 @lab1.route('/lab1/created')
 def created():
@@ -124,6 +108,7 @@ def created():
     </body>
 </html>
 ''', 201
+
 
 @lab1.route('/lab1')
 def lab():
@@ -163,6 +148,7 @@ def lab():
 </html>
 '''
 
+
 @lab1.route('/lab1/trigger_error')
 def null_error():
         return 1/0
@@ -170,8 +156,8 @@ def null_error():
 
 @lab1.route('/lab1/my_route')
 def my_route():
-    css_path = url_for("static", filename="404.css")
-    path = url_for("static", filename="cat.jpg")
+    css_path = url_for("static", filename="lab1/404.css")
+    path = url_for("static", filename="lab1/cat.jpg")
     return '''
 <!doctype html>
 <html>

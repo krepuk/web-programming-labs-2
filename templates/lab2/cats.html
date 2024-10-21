@@ -7,7 +7,7 @@
 {% block main %}
     {% for cat in cats %}
     <div class="cat-card">
-        <img src="{{ url_for('static', filename=cat.image) }}" alt="{{ cat.name }}">
+        <img src="{{ url_for('static', filename='Lab2/cat.img') }}" alt="{{ cat.name }}">
         <h2>{{ cat.name }}</h2>
         <p>{{ cat.description }}</p>
     </div>

@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, redirect
+from flask import Blueprint, url_for, redirect, render_template
 lab2 = Blueprint('lab2', __name__)
 
 
@@ -120,7 +120,7 @@ def laba2():
 <html>
     <head>
         <title>Лабораторная 2</title>
-        <link rel="stylesheet" href="{ url_for('static', filename='main.css') }">
+        <link rel="stylesheet" href="{ url_for('static', filename='lab1/main.css') }">
     </head>
     <body>
         <h1>Лабораторная 2</h1>
@@ -164,7 +164,7 @@ def calc_redirect_a(a):
 
 @lab2.route('/lab2/calc/<int:a>/<int:b>')
 def calc(a, b):
-    css_path = url_for("static", filename="main.css")
+    css_path = url_for("static", filename="lab1/main.css")
     sum_result = a + b
     diff_result = a - b
     prod_result = a * b
@@ -195,6 +195,7 @@ def calc(a, b):
     </html>
     '''
 
+
 books = [
     {"author": "Джордж Оруэлл", "title": "1984", "genre": "Научная фантастика", "pages": 328},
     {"author": "Рэй Брэдбери", "title": "451 градус по Фаренгейту", "genre": "Научная фантастика", "pages": 224},
@@ -208,10 +209,10 @@ books = [
     {"author": "Джером Д. Сэлинджер", "title": "Над пропастью во ржи", "genre": "Роман", "pages": 277}
 ]
 
-
 @lab2.route('/lab2/books')
 def books_list():
     return render_template('books.html', books=books)
+
 
 cats = [
     {"name": "Британская кошка", "description": "Отличается вредным характером", "image": "cat1.jpg"},
@@ -221,8 +222,7 @@ cats = [
     {"name": "Персидская кошка", "description": "Имеет плоскую морду", "image": "cat5.jpg"}
 ]
 
-
 @lab2.route('/lab2/cats')
 def cats_list():
-   return render_template('cats.html', cats=cats)
+   return render_template('lab2/cats.html', cats=cats)
 

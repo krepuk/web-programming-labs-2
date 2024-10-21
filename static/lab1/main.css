@@ -76,3 +76,44 @@ h2 {
     color: #691801; 
     font-family: Arial, sans-serif;
 }
+
+.drink-section, .additives-section, .submit-section {
+    margin-bottom: 20px;
+}
+
+.order-button {
+    padding: 10px 20px;
+    background-color: #5849ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-actions {
+    margin-top: 20px;
+}
+
+.save-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}
