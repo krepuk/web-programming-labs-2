@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Репьюк Катя.{% block lab %}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='lab1/main.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lab1/main.css') }}">
     <style>
+        body {
+            {% if request.cookies.get('color') %}
+            color: {{ request.cookies.get('color') }};
+            {% endif %}
+
+            {% if request.cookies.get('backgroundcolor') %}
+            background-color: {{ request.cookies.get('backgroundcolor') }};
+            {% endif %}
+
+            {% if request.cookies.get('fontsize') %}
+            font-size: {{ request.cookies.get('fontsize') }}px;
+            {% endif %}
+        }
     </style>
 </head>
 <body>

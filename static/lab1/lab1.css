@@ -1,18 +1,18 @@
 body {
-    background-color: #91ccff; /* Светло-голубой фон */
-    color: #3f0048; /* Темно-серый цвет текста */
+    background-color: #91ccff; 
+    color: #3f0048; 
     font-family: Arial, sans-serif;
     text-align: center;
 }
 
 h1 {
-    color: #09014a; /* Темно-бирюзовый цвет заголовка */
+    color: #09014a;
 }
 
 img {
-    width: 500px; /* Ширина изображения */
-    height: auto; /* Автоматическая высота, чтобы сохранить пропорции */
-    border: 5px solid #7464ff; /* Темно-бирюзовый бордер */
-    border-radius: 10px; /* Скругленные углы */
-    margin-top: 20px; /* Отступ сверху */
+    width: 500px; 
+    height: auto; 
+    border: 5px solid #7464ff; 
+    border-radius: 10px; 
+    margin-top: 20px; 
 }

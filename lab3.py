@@ -92,3 +92,83 @@ def settings():
     linkcolor = request.cookies.get('linkcolor')
     resp = make_response(render_template('lab3/settings.html', color=color, backgroundcolor=backgroundcolor,fontsize=fontsize, linkcolor=linkcolor))
     return resp
+
+
+@lab3.route('/lab3/formtrain')
+def formTrain():
+    ticketCost = 0
+    fio = request.args.get('fio')
+    place = request.args.get('place')
+    linen = request.args.get('linen')
+    luggage = request.args.get('luggage')
+    age = request.args.get('age')
+    start = request.args.get('start')
+    end = request.args.get('end')
+    date = request.args.get('date')
+    insurance = request.args.get('insurance')
+
+    argsNames = [fio, age, start, end, date]
+
+    check = False
+
+    errors = {
+        'fio': '',
+        'age': '',
+        'start': '',
+        'end': '',
+        'date': ''
+    }
+
+    if fio == '':
+        errors['fio'] = 'Заполните поле!'
+    else:
+        errors['fio'] = ''
+
+    if age == '':
+        errors['age'] = 'Заполните поле!'
+    elif  type(age) == str and (int(age) < 0 or int(age) > 120):
+        errors['age'] = 'Возраст должен быть от 0 до 120 лет!'
+    else:
+        errors['age'] = ''
+
+    if start == '':
+        errors['start'] = 'Заполните поле!'
+    else:
+        errors['start'] = ''
+
+    if end == '':
+        errors['end'] = 'Заполните поле!'
+    else:
+        errors['end'] = ''
+
+    if date == '':
+        errors['date'] = 'Заполните поле!'
+    else:
+        errors['date'] = ''
+
+    if all(argsNames) and (int(age) >= 0 and int(age) <= 120):
+        check = True
+
+    if check == True:
+        if int(age) > 17:
+            ticketCost += 1000
+        else:
+            ticketCost += 700
+
+        if place == 'нижняя':
+            ticketCost += 100
+        elif place == 'нижняя боковая':
+            ticketCost += 100
+        
+        if linen is not None:
+            ticketCost += 75
+        
+        if luggage is not None:
+            ticketCost += 250
+        
+        if insurance is not None:
+            ticketCost += 150
+        
+    return render_template('lab3/formtrain.html', fio=fio, place=place, linen=linen, luggage=luggage,
+                        age=age, start=start, end=end, date=date, insurance=insurance, errors=errors,
+                        argsNames=argsNames, check=check, ticketCost=ticketCost)

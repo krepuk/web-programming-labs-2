@@ -6,10 +6,13 @@
 {# основной контент: #}
 {% block main %}
     <h1>Формы, cookie</h1>
-    <div>
-        Привет, <span style="color: {{ name_color }}">{{ name }}</span>!
-    </div>
-    <div>Список сделанных страниц:</div>
+    {% if name %}
+        <div>Привет, <span style="color: {{name_color}}">{{name}}, твой возраст {{age}}</span>
+        </div>
+    {% else %}
+        <div>Привет, аноним</span></div>
+    {% endif %}
+    <div>Тема лабораторной - формы, cookie. Список сделанных страниц:</div>
     <ol>
         <li>
             <a href="/lab3/cookie">Куки</a>
@@ -25,6 +28,9 @@
         </li>
         <li>
         <a href="/lab3/settings">Настройки</a>
+        </li>
+        <li>
+        <a href="/lab3/formtrain">Билеты</a>
         </li>
     </ol>
 {% endblock %}
