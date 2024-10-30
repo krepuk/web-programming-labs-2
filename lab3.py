@@ -4,9 +4,10 @@ lab3 = Blueprint('lab3', __name__)
 
 @lab3.route('/lab3/')
 def lab():
+    age = request.cookies.get('age')
     name = request.cookies.get('name')
     name_color = request.cookies.get('name_color')
-    return render_template('lab3/lab3.html', name=name, name_color=name_color)
+    return render_template('lab3/lab3.html', name=name, name_color=name_color, age=age)
 
 
 @lab3.route('/lab3/cookie')
@@ -127,7 +128,7 @@ def formTrain():
     if age == '':
         errors['age'] = 'Заполните поле!'
     elif  type(age) == str and (int(age) < 0 or int(age) > 120):
-        errors['age'] = 'Возраст должен быть от 0 до 120 лет!'
+        errors['age'] = 'Введите реальный возраст!'
     else:
         errors['age'] = ''
 
@@ -172,3 +173,66 @@ def formTrain():
     return render_template('lab3/formtrain.html', fio=fio, place=place, linen=linen, luggage=luggage,
                         age=age, start=start, end=end, date=date, insurance=insurance, errors=errors,
                         argsNames=argsNames, check=check, ticketCost=ticketCost)
+
+
+@lab3.route('/lab3/clear_cookies')
+def clear_cookies():
+    resp = make_response(redirect('/lab3/settings'))
+    resp.delete_cookie('color')
+    resp.delete_cookie('backgroundcolor')
+    resp.delete_cookie('fontsize')
+    resp.delete_cookie('linkcolor')
+    return resp
+
+
+cats = [
+    {"breed": "Британская короткошерстная", "price": 500, "color": "Серый", "origin": "Великобритания"},
+    {"breed": "Сиамская", "price": 600, "color": "Коричневый", "origin": "Таиланд"},
+    {"breed": "Мейн-кун", "price": 700, "color": "Рыжий", "origin": "США"},
+    {"breed": "Русская голубая", "price": 550, "color": "Голубой", "origin": "Россия"},
+    {"breed": "Бенгальская", "price": 800, "color": "Пятнистый", "origin": "США"},
+    {"breed": "Сфинкс", "price": 900, "color": "Безволосый", "origin": "Канада"},
+    {"breed": "Абиссинская", "price": 650, "color": "Охра", "origin": "Эфиопия"},
+    {"breed": "Шотландская вислоухая", "price": 500, "color": "Голубой", "origin": "Великобритания"},
+    {"breed": "Бурманская", "price": 750, "color": "Коричневый", "origin": "Бирма"},
+    {"breed": "Норвежская лесная", "price": 600, "color": "Серебристый", "origin": "Норвегия"},
+    {"breed": "Американский керл", "price": 550, "color": "Черный", "origin": "США"},
+    {"breed": "Персидская", "price": 850, "color": "Белый", "origin": "Иран"},
+    {"breed": "Экзотическая короткошерстная", "price": 700, "color": "Голубой", "origin": "США"},
+    {"breed": "Девон-рекс", "price": 650, "color": "Рыжий", "origin": "Великобритания"},
+    {"breed": "Корниш-рекс", "price": 500, "color": "Пятнистый", "origin": "Великобритания"},
+    {"breed": "Манчкин", "price": 750, "color": "Голубой", "origin": "США"},
+    {"breed": "Саванна", "price": 900, "color": "Пятнистый", "origin": "США"},
+    {"breed": "Ориентальная", "price": 600, "color": "Голубой", "origin": "США"},
+    {"breed": "Сибирская", "price": 550, "color": "Голубой", "origin": "Россия"},
+    {"breed": "Тойгер", "price": 800, "color": "Пятнистый", "origin": "США"}
+]
+
+
+@lab3.route('/lab3/cats')
+def cats():
+    min_price = request.args.get('min')
+    max_price = request.args.get('max')
+    
+    showList = []
+
+    errors = {}
+
+
+    if min_price == '':
+        errors['min'] = 'Заполните поле!'
+    else:
+        errors['min'] = ''
+
+    if max_price == '':
+        errors['max'] = 'Заполните поле!'
+    else:
+        errors['max'] = ''
+
+    if min_price and max_price:
+        for cat in cats:
+            if cat['price'] >= int(min_price) and cat['price'] <= int(max_price):
+                showList.append(cat)
+
+    return render_template('/lab3/cats.html', min=min_price, max=max_price, errors=errors, cats=cats, showList=showList)
+

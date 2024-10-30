@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    {% if min and max %}
+        {% if showList|length == 0 %}
+            <h1>Коты по диапазону не найдены!</h1>
+            <a href="/lab3/cats">Назад</a>
+        {% else %}
+            <h1>Список котов от {{min}}&#x20bd; до {{max}}&#x20bd;</h1>
+            <a href="/lab3/cats">Назад</a>
+            <ul>
+                {% for cat in showList %}
+                    <li>
+                        <div class="cat-item">
+                            <div class="cat-breed">{{ cat.breed }}</div>
+                            <div class="cat-details">
+                                <span class="cat-color">Окраска: {{ cat.color }}</span>,
+                                <span class="cat-origin">Страна происхождения: {{ cat.origin }}</span>,
+                                <span class="cat-price">Цена: {{ cat.price }}&#x20bd;</span>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% else %}
+        <h1>Выберете диапазон цен котов&#128008;:</h1>
+        <form class="order" method="post">
+            <label>Минимальная цена:</label>
+            <div>
+                <input type="number" name="min" value="{{min or ''}}">
+                <span class="error">{{errors.min}}</span>
+            </div>
+
+            <label>Максимальная цена:</label>
+            <div>
+                <input type="number" name="max" value="{{max or ''}}">
+                <span class="error">{{errors.max}}</span>
+            </div>
+
+            <div style="margin: 35px;">
+                <button type="submit">Поиск</button>
+            </div>       
+        </form>
+    {% endif %}
+{% endblock %}

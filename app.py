@@ -2,11 +2,13 @@ from flask import Flask, url_for, redirect, render_template, abort
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
+from lab4 import lab4
 
 app = Flask(__name__)
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
+app.register_blueprint(lab4)
 
 
 @app.route('/')
@@ -143,7 +145,7 @@ def error_418():
 
 
 @app.errorhandler(500)
-def server_error(e):
+def trigger_error(e):
     css_path = url_for("static", filename="404.css")
     return f'''
 <!doctype html>
