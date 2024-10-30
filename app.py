@@ -27,8 +27,11 @@ def web():
             <ul>
                 <li><a href="/lab2">Вторая лабораторная</a></li>
             </ul>
-                        <ul>
+            <ul>
                 <li><a href="/lab3">Третья лабораторная</a></li>
+            </ul>
+            <ul>
+                <li><a href="/lab4">Четвертая лабораторная</a></li>
             </ul>
                 <h1>Web-сервер на flask</h1>
             <a href="/lab1/autor">autor</a>
