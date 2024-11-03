@@ -4,12 +4,12 @@
 
 
 
-{% block main %}
-    {% for cat in cats %}
-    <div class="cat-card">
-        <img src="{{ url_for('static', filename='Lab2/cat1.jpg') }}" alt="{{ cat.name }}">
-        <h2>{{ cat.name }}</h2>
-        <p>{{ cat.description }}</p>
-    </div>
-    {% endfor %}
+{% block main %} 
+    {% for cat in cats %} 
+    <div class="cat-card"> 
+        <img src="{{ url_for('static', filename='lab2/cat' ~ loop.index ~ '.jpg') }}" alt="{{ cat.name }}"> 
+        <h2>{{ cat.name }}</h2> 
+        <p>{{ cat.description }}</p> 
+    </div> 
+    {% endfor %} 
 {% endblock %}

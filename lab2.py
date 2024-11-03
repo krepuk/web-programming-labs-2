@@ -115,35 +115,7 @@ def example():
 
 @lab2.route('/lab2/')
 def laba2():
-    return f'''
-<!doctype html>
-<html>
-    <head>
-        <title>Лабораторная 2</title>
-        <link rel="stylesheet" href="{ url_for('static', filename='lab1/main.css') }">
-    </head>
-    <body>
-        <h1>Лабораторная 2</h1>
-        <h2>Список роутов</h2>
-        <ul>
-            <li><a href="/lab2/a">А</a></li>
-            <li><a href="/lab2/a/">/А</a></li>
-            <li><a href="/lab2/flowers/<int:flower_id>">Цветок</a></li>
-            <li><a href="/lab2/add_flower/<name>'">Добавить цветок</a></li>
-            <li><a href="/lab2/all_flowers">Все цветы</a></li>
-            <li><a href="/lab2/clear_flowers">Очистить список цветов</a></li>
-            <li><a href="/lab2/example">Пример</a></li>
-            <li><a href="/lab2/filters">Фильтры</a></li>
-            <li><a href="/lab2/calc/">Калькулятор</a></li>
-            <li><a href="/lab2/calc/<int:a>">Калькулятор А</a></li>
-            <li><a href="/lab2/calc/<int:a>/<int:b>">Калькулятор А/B</a></li>
-            <li><a href="/lab2/books">Книги</a></li>
-            <li><a href="/lab2/cats">Котики</a></li>
-        </ul>
-        <a href="/">Вернуться на главную</a>
-    </body>
-</html>
-'''
+    return render_template('/lab2/lab2.html')
 
 
 @lab2.route('/lab2/filters')

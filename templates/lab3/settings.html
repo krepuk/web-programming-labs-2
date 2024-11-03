@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block lab %}Лабораторная работа 3{% endblock%}
+{% block lab %}Лабораторная работа 3{% endblock %}
 
 {% block main %}
     <h1>Cookies</h1>
@@ -18,11 +18,11 @@
             <input type="text" id="fontsize" name="fontsize" value="{{ fontsize or '' }}">
         </div>
         <div>
-            <label for="linkcolor">Выберите цвет ссылок:</label>
-            <input type="color" id="linkcolor" name="linkcolor" value="{{ linkcolor or '' }}">
+            <label for="buttoncolor">Выберите цвет кнопки:</label>
+            <input type="color" id="buttoncolor" name="buttoncolor" value="{{ buttoncolor or '' }}">
         </div>
         <div>
-            <button type="submit">OK</button>
+            <button type="submit" style="background-color: {{ buttoncolor or '#000000' }}">OK</button>
         </div>
         <div>
             <a href="/lab3/clear_cookies">Сбросить куки</a>

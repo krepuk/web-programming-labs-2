@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block lab %}Результаты поиска{% endblock %}
+
+{% block main %}
+    <h1>Результаты поиска</h1>
+    <table class="search-results">
+        <tr>
+            <th>Порода</th>
+            <th>Цена</th>
+            <th>Окраска</th>
+            <th>Происхождение</th>
+        </tr>
+        {% for cat in cats %}
+        <tr>
+            <td>{{ cat.breed }}</td>
+            <td>{{ cat.price }}</td>
+            <td>{{ cat.color }}</td>
+            <td>{{ cat.origin }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="/lab3/cats">Назад к поиску</a>
+{% endblock %}

@@ -112,13 +112,14 @@ def created():
 
 @lab1.route('/lab1')
 def lab():
-    css_path = url_for("static", filename="lab1.css")
+    css_path = url_for("static", filename="lab1/lab1.css")
     return f'''
 <!doctype html>
 <html>
     <head>
         <title>Лабораторная 1</title>
-        <link rel="stylesheet" type="text/css" href="{ css_path }">
+
+        <link rel = "stylesheet" href="''' + css_path +'''">
     </head>
     <body>
         <h1>Лабораторная 1</h1>
@@ -149,21 +150,16 @@ def lab():
 '''
 
 
-@lab1.route('/lab1/trigger_error')
-def null_error():
-        return 1/0
-
-
 @lab1.route('/lab1/my_route')
 def my_route():
-    css_path = url_for("static", filename="lab1/404.css")
+    css_path = url_for("static", filename="404.css")
     path = url_for("static", filename="lab1/cat.jpg")
     return '''
 <!doctype html>
 <html>
     <head>
         <title>Новый роут</title>
-        <link rel="stylesheet" type="text/css" href="{css_path}">
+        <link rel = "stylesheet" href="''' + css_path +'''">
     </head>
     <body>
         <header>*Что-то на программистком*</header>

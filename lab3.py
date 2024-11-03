@@ -72,26 +72,37 @@ def success():
         return render_template('lab3/success.html', price=price)
 
 
-@lab3.route('/lab3/settings', methods=['GET', 'POST'])
+@lab3.route('/lab3/settings', methods=['POST', 'GET'])
 def settings():
     if request.method == 'POST':
         color = request.form.get('color')
         backgroundcolor = request.form.get('backgroundcolor')
         fontsize = request.form.get('fontsize')
-        linkcolor = request.form.get('linkcolor')
-        if color and backgroundcolor:
-            resp = make_response(redirect('/lab3/settings'))
-            resp.set_cookie('color', color)
-            resp.set_cookie('backgroundcolor', backgroundcolor)
-            resp.set_cookie('fontsize', fontsize)
-            resp.set_cookie('linkcolor', linkcolor)
-            return resp
+        buttoncolor = request.form.get('buttoncolor')
+
+        response = make_response(render_template('lab3/settings.html', color=color, backgroundcolor=backgroundcolor, fontsize=fontsize, buttoncolor=buttoncolor))
+        response.set_cookie('color', color)
+        response.set_cookie('backgroundcolor', backgroundcolor)
+        response.set_cookie('fontsize', fontsize)
+        response.set_cookie('buttoncolor', buttoncolor)
+
+        return response
 
     color = request.cookies.get('color')
     backgroundcolor = request.cookies.get('backgroundcolor')
     fontsize = request.cookies.get('fontsize')
-    linkcolor = request.cookies.get('linkcolor')
-    resp = make_response(render_template('lab3/settings.html', color=color, backgroundcolor=backgroundcolor,fontsize=fontsize, linkcolor=linkcolor))
+    buttoncolor = request.cookies.get('buttoncolor')
+
+    return render_template('lab3/settings.html', color=color, backgroundcolor=backgroundcolor, fontsize=fontsize, buttoncolor=buttoncolor)
+
+
+@lab3.route('/lab3/clear_cookies')
+def clear_cookies():
+    resp = make_response(redirect('/lab3/settings'))
+    resp.delete_cookie('color')
+    resp.delete_cookie('backgroundcolor')
+    resp.delete_cookie('fontsize')
+    resp.delete_cookie('buttoncolor')
     return resp
 
 
@@ -175,16 +186,6 @@ def formTrain():
                         argsNames=argsNames, check=check, ticketCost=ticketCost)
 
 
-@lab3.route('/lab3/clear_cookies')
-def clear_cookies():
-    resp = make_response(redirect('/lab3/settings'))
-    resp.delete_cookie('color')
-    resp.delete_cookie('backgroundcolor')
-    resp.delete_cookie('fontsize')
-    resp.delete_cookie('linkcolor')
-    return resp
-
-
 cats = [
     {"breed": "Британская короткошерстная", "price": 500, "color": "Серый", "origin": "Великобритания"},
     {"breed": "Сиамская", "price": 600, "color": "Коричневый", "origin": "Таиланд"},
@@ -210,29 +211,12 @@ cats = [
 
 
 @lab3.route('/lab3/cats')
-def cats():
-    min_price = request.args.get('min')
-    max_price = request.args.get('max')
-    
-    showList = []
+def cat():
+    return render_template('lab3/cats.html')
 
-    errors = {}
-
-
-    if min_price == '':
-        errors['min'] = 'Заполните поле!'
-    else:
-        errors['min'] = ''
-
-    if max_price == '':
-        errors['max'] = 'Заполните поле!'
-    else:
-        errors['max'] = ''
-
-    if min_price and max_price:
-        for cat in cats:
-            if cat['price'] >= int(min_price) and cat['price'] <= int(max_price):
-                showList.append(cat)
-
-    return render_template('/lab3/cats.html', min=min_price, max=max_price, errors=errors, cats=cats, showList=showList)
-
+@lab3.route('/lab3/results', methods=['POST', 'GET'])
+def search():
+    min_price = float(request.form['min_price'])
+    max_price = float(request.form['max_price'])
+    filtered_cats = [cat for cat in cats if min_price <= cat['price'] <= max_price]
+    return render_template('lab3/result.html', cats=filtered_cats)
