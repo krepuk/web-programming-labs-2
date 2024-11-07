@@ -1,14 +1,29 @@
 {% extends "base.html" %}
 
-{% block lab %}Лабораторная работа 4{% endblock %}
+{# номер лабораторной работы: #}
+{% block lab %} Лабораторная работа 4{% endblock %}
 
+{# основной контент: #}
 {% block main %}
-    <h1>Лабораторная работа 4</h1>
-    <ul>
-        <li><a href="{{ url_for('lab4.div_form') }}">Деление</a></li>
-        <li><a href="{{ url_for('lab4.sum_form') }}">Суммирование</a></li>
-        <li><a href="{{ url_for('lab4.mul_form') }}">Умножение</a></li>
-        <li><a href="{{ url_for('lab4.sub_form') }}">Вычитание</a></li>
-        <li><a href="{{ url_for('lab4.pow_form') }}">Возведение в степень</a></li>
-    </ul>
+    <div>Список страниц:</div>
+    <ol>
+        <li>
+            <a href="/lab4/div-form">Деление</a>
+        </li>
+        <li>
+            <a href="/lab4/sum-form">Суммирование</a>
+        </li>
+        <li>
+            <a href="/lab4/mul-form">Умножение</a>
+        </li>
+        <li>
+            <a href="/lab4/sub-form">Вычитание</a>
+        </li>
+        <li>
+            <a href="/lab4/pow-form">Возведение в степень</a>
+        </li>
+        <li>
+            <a href="/lab4/tree">Дерево</a>
+        </li>
+    </ol>
 {% endblock %}
