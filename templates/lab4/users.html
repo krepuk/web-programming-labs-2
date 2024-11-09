@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 4{% endblock %}
+
+{% block main %}
+    <h1>Список пользователей</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Логин</th>
+                <th>Имя</th>
+                <th>Пол</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.login }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.gender }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Управление аккаунтом</h2>
+    <form method="post">
+        <input type="hidden" name="action" value="delete">
+        <button type="submit">Удалить себя из списка</button>
+    </form>
+    <form method="post">
+        <input type="hidden" name="action" value="edit">
+        <div>
+            <label for="password">Новый пароль:</label>
+            <input type="password" id="password" name="password">
+        </div>
+        <div>
+            <label for="name">Новое имя:</label>
+            <input type="text" id="name" name="name">
+        </div>
+        <div>
+            <label for="gender">Новый пол:</label>
+            <select id="gender" name="gender">
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Редактировать свои данные</button>
+        </div>
+    </form>
+{% endblock %}

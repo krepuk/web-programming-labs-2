@@ -238,3 +238,50 @@ def grain_order():
         return render_template('/lab4/grain_order.html', message=message, discount_message=discount_message)
     
     return render_template('/lab4/grain_order.html')
+
+
+@lab4.route('/lab4/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        login = request.form.get('login')
+        password = request.form.get('password')
+        name = request.form.get('name')
+        gender = request.form.get('gender')
+        
+        if not login or not password or not name or not gender:
+            error = 'Ошибка: все поля должны быть заполнены'
+            return render_template('/lab4/register.html', error=error)
+        
+        for user in users:
+            if user['login'] == login:
+                error = 'Ошибка: логин уже занят'
+                return render_template('/lab4/register.html', error=error)
+        
+        users.append({'login': login, 'password': password, 'name': name, 'gender': gender})
+        return redirect('/lab4/users')  # Перенаправление на страницу со списком пользователей
+    
+    return render_template('/lab4/register.html')
+
+@lab4.route('/lab4/users', methods=['GET', 'POST'])
+def users_list():
+    if 'login' not in session:
+        return redirect('/lab4/login')
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'delete':
+            login = session['login']
+            users[:] = [user for user in users if user['login'] != login]
+            session.pop('login', None)
+            return redirect('/lab4/login')
+        elif action == 'edit':
+            login = session['login']
+            user = next(user for user in users if user['login'] == login)
+            user['password'] = request.form.get('password')
+            user['name'] = request.form.get('name')
+            user['gender'] = request.form.get('gender')
+            return redirect('/lab4/users')
+    
+    return render_template('/lab4/users.html', users=users)
+
+
