@@ -5,6 +5,9 @@ from lab3 import lab3
 from lab4 import lab4
 
 app = Flask(__name__)
+
+app.secret_key = 'супер мега ультра секретный ключ'
+
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
@@ -150,18 +153,18 @@ def error_418():
 @app.errorhandler(500)
 def trigger_error(e):
     css_path = url_for("static", filename="404.css")
-    return f'''
-<!doctype html>
-<html>
-    <head>
-        <title>Ошибка 500</title>
-        <link rel="stylesheet" type="text/css" href="{ css_path }">
-    </head>
-    <body>
-        <div class="error-container">
-            <h1>Ошибка 500</h1>
-            <p>P.S. кажется, ошибка в коде </p>
-        </div>
-    </body>
-</html>
+    return '''
+    <!doctype html>
+    <html>
+        <head>
+            <title>Ошибка 500</title>
+            <link rel="stylesheet" type="text/css" href="{ css_path }">
+        </head>
+        <body>
+            <div class="error-container">
+                <h1>Ошибка 500</h1>
+                <p>P.S. кажется, ошибка в коде </p>
+            </div>
+        </body>
+    </html>
 ''', 500
