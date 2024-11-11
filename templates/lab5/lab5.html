@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{# номер лабораторной работы: #}
+{% block lab %} Лабораторная работа 4{% endblock %}
+
+{# основной контент: #}
+{% block main %}
+    <h2>Список страниц:</h2>
+    
+    <button class="log-button" onclick="window.location.href='/lab5/login'">Вход</button>
+    <button class="log-button" onclick="window.location.href='/lab5/register'">Регистрация</button>
+    <button class="log-button" onclick="window.location.href='/lab5/list'">Список статей</button>
+    <button class="log-button" onclick="window.location.href='/lab5/create'">Создать статью</button>
+    <div>
+        {% if login %}
+            {{ login }}
+        {% else %}
+            Анонимус
+        {% endif %}
+    </div>
+{% endblock %}
