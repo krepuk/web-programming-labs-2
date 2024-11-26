@@ -19,12 +19,8 @@
 
         <button type="submit">Вход</button>
     </form>
-    
-    {% if error %}
-        <div class="error">
-            {{ error }}
-        </div>
-    {% endif %}
-
-    <a href="/lab5/">Назад</a>
+    <div class="error">
+        {{ error }}
+    </div>
+    <a href="/lab5">Назад</a>
 {% endblock %}

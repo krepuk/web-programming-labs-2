@@ -1,21 +1,52 @@
 {% extends "base.html" %}
 
-{# номер лабораторной работы: #}
-{% block lab %} Лабораторная работа 4{% endblock %}
+{% block lab %}Лабораторная работа 5{% endblock %}
 
-{# основной контент: #}
 {% block main %}
-    <h2>Список страниц:</h2>
-    
-    <button class="log-button" onclick="window.location.href='/lab5/login'">Вход</button>
-    <button class="log-button" onclick="window.location.href='/lab5/register'">Регистрация</button>
-    <button class="log-button" onclick="window.location.href='/lab5/list'">Список статей</button>
-    <button class="log-button" onclick="window.location.href='/lab5/create'">Создать статью</button>
+    <style>
+        button {
+            background-color: #5a5cfb; 
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px; 
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+    </style>
+
+    <h1>Список всех страниц</h1>
+    <div class="link-container">
+        <div>
+            <button onclick="window.location.href='/lab5/login'">Вход</button>
+        </div>
+        <div>
+            <button onclick="window.location.href='/lab5/register'">Регистрация</button>
+        </div>
+        <div>
+            <button onclick="window.location.href='/lab5/list'">Список статей</button>
+        </div>
+        <div>
+            <button onclick="window.location.href='/lab5/create'">Создать статью</button>
+        </div>
+        <div>
+            <button onclick="window.location.href='/lab5/users'">Список пользователей</button>
+        </div>
+        <div class="user-info">
+            {% if login %}
+                {{ login }}
+            {% else %}
+                Анонимус
+            {% endif %}
+        </div>
+    </div>
+
     <div>
-        {% if login %}
-            {{ login }}
-        {% else %}
-            Анонимус
-        {% endif %}
+        <button onclick="window.location.href='/lab5/logout'">Выйти</button>
     </div>
 {% endblock %}
