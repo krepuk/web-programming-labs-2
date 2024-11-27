@@ -1,6 +1,45 @@
 {% extends "base.html" %}
 
 {% block main %}
+<style>
+    .btn {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+    }
+
+    .btn-favorite {
+        background-color: #ffcc00;
+        color: black;
+    }
+
+    .btn-favorite:hover {
+        background-color: #e6b800;
+    }
+
+    .btn-edit {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #45a049;
+    }
+
+    .btn-delete {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background-color: #da190b;
+    }
+</style>
     <h1>Статьи</h1>
 
     <div class="filter-options">
@@ -33,17 +72,15 @@
                     {% endif %}
                 </div>
                 <div class="article-actions">
-                    {% if is_admin %}
-                        <form action="/lab5/favorite/{{ article['id'] }}" method="post">
-                            <button type="submit" class="btn btn-favorite">
-                                {% if article['is_favorite'] %}
-                                    Убрать из избранного
-                                {% else %}
-                                    Добавить в избранное
-                                {% endif %}
-                            </button>
-                        </form>
-                    {% endif %}
+                    <form action="/lab5/favorite/{{ article['id'] }}" method="post">
+                        <button type="submit" class="btn btn-favorite">
+                            {% if article['is_favorite'] %}
+                                Убрать из избранного
+                            {% else %}
+                                Добавить в избранное
+                            {% endif %}
+                        </button>
+                    </form>
 
                     {% if session.get('login_id') %}
                         {% if sqllite %}
