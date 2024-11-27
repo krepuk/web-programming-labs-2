@@ -55,6 +55,36 @@ def api():
                         'id': id
                     }
     
+    if data['method'] == 'cancellation':
+        office_number = data['params']
+        for office in offices:
+            if office['number'] == office_number:
+                if office['tenant'] == '':
+                    return {
+                        'jsonrpc': '2.0',
+                        'error': {
+                            'code': 3,
+                            'message': 'Office is not booked'
+                        },
+                        'id': id
+                    }
+                elif office['tenant'] != login:
+                    return {
+                        'jsonrpc': '2.0',
+                        'error': {
+                            'code': 4,
+                            'message': 'You cannot cancel someone else\'s booking'
+                        },
+                        'id': id
+                    }
+                else:
+                    office['tenant'] = ''
+                    return {
+                        'jsonrpc': '2.0',
+                        'result': 'Cancellation successful',
+                        'id': id
+                    }
+    
     return {
         'jsonrpc': '2.0',
         'error': {
@@ -63,6 +93,5 @@ def api():
         },
         'id': id
     }
-
 
     
