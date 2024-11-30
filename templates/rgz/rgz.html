@@ -1,0 +1,19 @@
+{% extends "base_rgz.html" %}
+
+{% block lab %}{% endblock %}
+
+{%block script%}
+<script>
+</script>
+{%endblock%}
+{% block main %}
+    <h1>Добро пожаловать в мой мессенджер!</h1>
+    <h2>Зарегестрируйтесь на сайте</h2>
+    <div>
+        <button onclick="window.location.href='/registers'">Регистрация</button>
+    </div>
+    <h2>Если уже зарегестрированы, войдите в систему</h2>
+    <div>
+        <button onclick="window.location.href='/rgz/login'">Вход</button>
+    </div>
+{% endblock %}

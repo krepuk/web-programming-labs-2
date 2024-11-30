@@ -5,13 +5,15 @@ from lab3 import lab3
 from lab4 import lab4
 from lab5 import lab5
 from lab6 import lab6
+from rgz import rgz, jsonrpc_register
+from flask_jsonrpc import JSONRPC
 import os
 
 app = Flask(__name__)
+jsonrpc = JSONRPC(app, '/api')
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'супер мега ультра секретный ключ')
 app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'postgres')
-
 
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
@@ -19,6 +21,12 @@ app.register_blueprint(lab3)
 app.register_blueprint(lab4)
 app.register_blueprint(lab5)
 app.register_blueprint(lab6)
+app.register_blueprint(rgz)
+
+# Регистрация метода JSON-RPC
+@jsonrpc.method('register')
+def register(login: str, password: str):
+    return jsonrpc_register(login, password)
 
 
 @app.route('/')
@@ -48,6 +56,9 @@ def web():
             </ul>
             <ul>
                 <li><a href="/lab6">Шестая лабораторная</a></li>
+            </ul>
+            <ul>
+                <li><a href="/rgz">Расчетно-графическое задание</a></li>
             </ul>
                 <h1>Web-сервер на flask</h1>
             <a href="/lab1/autor">autor</a>
