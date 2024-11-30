@@ -24,26 +24,35 @@ function getOfficeList(){
     .then(function(data){
         const office_list = data.result;
         const ul = document.getElementById('office-list');
-        ul.innerHTML = ''; // Очищаем список перед обновлением
+        ul.innerHTML = ''; 
+        let totalCost = 0;
         for(let i = 0; i < office_list.length; i++) {
             const office = office_list[i];
             const li = document.createElement('li');
-            li.innerText = `${office.number}: ${office.tenant || 'свободен'}`;
+            li.innerText = `${office.number}: ${office.tenant || 'свободен'}, стоимость: ${office.price} руб.`;
             
             const bookingButton = document.createElement('button');
             bookingButton.innerText = 'зарезервировать';
             bookingButton.onclick = function() { booking(office.number) };
+            bookingButton.className = 'booking-button';
             li.appendChild(bookingButton);
 
             if (office.tenant) {
                 const releaseButton = document.createElement('button');
                 releaseButton.innerText = 'освободить';
                 releaseButton.onclick = function() { cancellation(office.number) };
+                releaseButton.className = 'release-button';
                 li.appendChild(releaseButton);
+                if (office.tenant === '{{ session.login }}') {
+                    totalCost += office.price;
+                }
             }
 
             ul.appendChild(li);
         }
+        const totalCostElement = document.createElement('p');
+        totalCostElement.innerText = `Общая стоимость аренды: ${totalCost} руб.`;
+        ul.appendChild(totalCostElement);
     })
 }
 
