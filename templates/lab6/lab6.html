@@ -34,14 +34,14 @@ function getOfficeList(){
             const bookingButton = document.createElement('button');
             bookingButton.innerText = 'зарезервировать';
             bookingButton.onclick = function() { booking(office.number) };
-            bookingButton.className = 'booking-button';
+            bookingButton.className = 'custom-button booking-button';
             li.appendChild(bookingButton);
 
             if (office.tenant) {
                 const releaseButton = document.createElement('button');
                 releaseButton.innerText = 'освободить';
                 releaseButton.onclick = function() { cancellation(office.number) };
-                releaseButton.className = 'release-button';
+                releaseButton.className = 'custom-button release-button';
                 li.appendChild(releaseButton);
                 if (office.tenant === '{{ session.login }}') {
                     totalCost += office.price;
@@ -134,7 +134,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {%endblock%}
+
 {% block main %}
-    <h1>Список кабинетов</h1>
+    <h1>Аренда офисов</h1>
     <ul id="office-list"></ul>
+    <a href="/lab5/login">Вход</a>
+    <a href="/lab5/register">Регистрация</a>
 {% endblock %}
