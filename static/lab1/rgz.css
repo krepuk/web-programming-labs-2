@@ -39,3 +39,15 @@ footer {
     position: fixed;
     bottom: 0; 
 }
+
+button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ff00f2;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
