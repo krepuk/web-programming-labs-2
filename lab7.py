@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, session, abort
+from flask import Blueprint, render_template, request, session, abort, make_response
+import json
 
 lab7 = Blueprint('lab7', __name__)
 
@@ -62,3 +63,13 @@ def put_film(id):
         abort(404)
     films[id] = film
     return films[id]
+
+
+@lab7.route('/lab7/rest-api/films/', methods=['POST'])
+def add_film():
+    film = request.get_json()
+    films.append(film)
+    new_index = len(films) - 1
+    response = make_response(json.dumps(new_index))
+    response.headers['Content-Type'] = 'application/json'
+    return response, 201
