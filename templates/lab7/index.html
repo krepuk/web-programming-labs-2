@@ -20,6 +20,81 @@
 .error-message {
     color: red;
 }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #e6f7ff; 
+    box-shadow: 0 2px 5px rgba(37, 34, 255, 0.153);
+    border: 1px solid #b3e0ff;
+}
+
+
+tr:hover {
+    background-color: #cceeff; 
+}
+
+
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    background-color: #007dae; 
+    color: white; 
+}
+
+button:hover {
+    background-color: #005599; 
+}
+
+.modal {
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-color: #e6f7ff;
+    width: 400px;
+    left: 50%;
+    top: 220px;
+    margin-left: -100px;
+    position: absolute;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #b3e0ff; 
+}
+
+.modal label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #005599;
+}
+
+.modal input, .modal textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #b3e0ff; 
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f0f8ff; 
+}
+
+.modal textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.modal button {
+    margin-top: 15px;
+}
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
 </style>
 {% endblock %}
 

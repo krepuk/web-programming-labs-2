@@ -9,33 +9,39 @@ function fillfilmlist() {
         for(let i = 0; i < films.length; i++) {
             let tr = document.createElement('tr');
 
-            let tdTitle = document.createElement('td');
-            let tdTitleRus = document.createElement('td');
+            let tdTitleRus = document.createElement('td'); 
+            let tdTitle = document.createElement('td'); 
             let tdYear = document.createElement('td');
             let tdActions = document.createElement('td');
 
-            tdTitle.innerText = films[i].title == films[i].title_ru ? '' : films[i].title;
             tdTitleRus.innerText = films[i].title_ru;
+
+            if (films[i].title && films[i].title !== films[i].title_ru) {
+                tdTitle.innerHTML = `<i>(${films[i].title})</i>`;
+            } else {
+                tdTitle.innerHTML = `<i>(${films[i].title_ru})</i>`; 
+            }
+
             tdYear.innerText = films[i].year;
 
             let editButton = document.createElement('button');
             editButton.innerText = 'редактировать';
             editButton.onclick = function() { 
-                editfilm(films[i].id); // Передаем id фильма, а не индекс
+                editfilm(i); 
             };
 
             let delButton = document.createElement('button');
             delButton.innerText = 'удалить';
 
             delButton.onclick = function() { 
-                deletefilm(films[i].id, films[i].title_ru); // Передаем id фильма, а не индекс
+                deletefilm(i, films[i].title_ru); 
             };
 
             tdActions.append(editButton);
             tdActions.append(delButton);
 
-            tr.append(tdTitle);
-            tr.append(tdTitleRus);
+            tr.append(tdTitleRus); 
+            tr.append(tdTitle); 
             tr.append(tdYear);
             tr.append(tdActions);
 
@@ -87,12 +93,11 @@ function sendfilm() {
         description: document.getElementById('description').value,
     }
 
-    // Проверка описания на клиенте
     if (film.description.trim() === '') {
         document.getElementById('description-error').innerText = 'Описание не может быть пустым';
         return;
     } else {
-        document.getElementById('description-error').innerText = ''; // Очищаем сообщение об ошибке
+        document.getElementById('description-error').innerText = ''; 
     }
     
     const url = `/lab7/rest-api/films/${id}`;
