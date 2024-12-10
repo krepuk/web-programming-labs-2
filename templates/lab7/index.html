@@ -9,7 +9,7 @@
     display: none;
     z-index: 100;
     box-shadow: 3px 3px 5px rgba(31, 0, 97, 0.5);
-    background: rgb(205, 183, 255);
+    background: rgb(180, 222, 255);
     width: 400px;
     left: 50%;
     top: 220px;
@@ -17,6 +17,9 @@
     position: absolute;
     padding: 20px;
 }   
+.error-message {
+    color: red;
+}
 </style>
 {% endblock %}
 
@@ -63,6 +66,7 @@
         <label>
             Описание:
             <textarea id="description"></textarea>
+            <div id="description-error" class="error-message"></div>
         </label><br>
 
         <button onclick="sendfilm()">OK</button>
