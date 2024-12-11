@@ -6,6 +6,7 @@ from lab4 import lab4
 from lab5 import lab5
 from lab6 import lab6
 from lab7 import lab7
+from lab8 import lab8
 from rgz import rgz, jsonrpc_register
 from flask_jsonrpc import JSONRPC
 import os
@@ -23,6 +24,7 @@ app.register_blueprint(lab4)
 app.register_blueprint(lab5)
 app.register_blueprint(lab6)
 app.register_blueprint(lab7)
+app.register_blueprint(lab8)
 app.register_blueprint(rgz)
 
 @jsonrpc.method('register')
@@ -59,10 +61,13 @@ def web():
                 <li><a href="/lab6">Шестая лабораторная</a></li>
             </ul>
             <ul>
-                <li><a href="/rgz">Расчетно-графическое задание</a></li>
+                <li><a href="/lab7">Седьмая лабораторная</a></li>
             </ul>
             <ul>
-                <li><a href="/lab7">Седьмая лабораторная</a></li>
+                <li><a href="/lab8">Восьмая лабораторная</a></li>
+            </ul>
+            <ul>
+                <li><a href="/rgz">Расчетно-графическое задание</a></li>
             </ul>
                 <h1>Web-сервер на flask</h1>
             <a href="/lab1/autor">autor</a>

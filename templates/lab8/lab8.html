@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+    <style>
+        button {
+            background-color: #5a5cfb; 
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px; 
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+    </style>
+
+    <h1>Список всех страниц</h1>
+    <div class="link-container">
+        <div>
+            <button onclick="window.location.href='/lab8/login'">Вход</button>
+        </div>
+        <div>
+            <button onclick="window.location.href='/lab8/register'">Регистрация</button>
+        </div>
+        <div>
+            <button onclick="window.location.href='/lab8/articles'">Список статей</button>
+        </div>
+        <div>
+            <button onclick="window.location.href='/lab8/create'">Создать статью</button>
+        </div>
+        <div class="user-info">
+            {% if login %}
+                {{ login }}
+            {% else %}
+                Анонимус
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <button onclick="window.location.href='/lab5/logout'">Выйти</button>
+    </div>
+{% endblock %}
