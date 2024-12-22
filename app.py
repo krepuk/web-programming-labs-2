@@ -8,18 +8,19 @@ from lab6 import lab6
 from lab7 import lab7
 from lab8 import lab8
 from lab9 import lab9
-from rgz import rgz, jsonrpc_register
 from flask_jsonrpc import JSONRPC
 import os
 
 app = Flask(__name__)
+
 jsonrpc = JSONRPC(app, '/api')
 
 app.secret_key = 'christmas1'
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'супер мега ультра секретный ключ')
-app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'postgres')
 
+
+# Регистрируем Blueprint'ы
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
@@ -29,11 +30,6 @@ app.register_blueprint(lab6)
 app.register_blueprint(lab7)
 app.register_blueprint(lab8)
 app.register_blueprint(lab9)
-app.register_blueprint(rgz)
-
-@jsonrpc.method('register')
-def register(login: str, password: str):
-    return jsonrpc_register(login, password)
 
 
 @app.route('/')

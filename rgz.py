@@ -1,105 +1,143 @@
-from flask import Blueprint, render_template, request, redirect, session, url_for, current_app
+from flask import Flask, request, jsonify, render_template
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash
 import sqlite3
-import json
+from os import path
 
-rgz = Blueprint('rgz', __name__)
+app = Flask(__name__)
 
-users = {}
-
-def db_connect():
-    if current_app.config['DB_TYPE'] == 'postgres':
-        conn = psycopg2.connect(
-            host='127.0.0.1',
-            database='repuyk_kate_knowledge_base1',
-            user='repuyk_kate_knowledge_base1',
-            password='1234'
-        )
-        cur = conn.cursor(cursor_factory= RealDictCursor)
-    else:
-        dir_path = path.dirname(path.realpath(__file__))
-        db_path = path.join(dir_path, "dabase.db")
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-
-    return conn, cur
-
-def db_close(conn, cur):
-    conn.commit()
-    cur.close()
-    conn.close()
+app.config.update({
+    'DB_TYPE': 'postgres',  
+    'DB_HOST': '127.0.0.1',
+    'DB_NAME': 'rgz',
+    'DB_USER': 'rgz',
+    'DB_PASSWORD': '123',
+    'DB_PORT': 5432, 
+})
 
 
-@rgz.route('/rgz')
+@app.route('/') 
+
+
+@app.route('/rgz')
 def rgzz():
     return render_template('rgz/rgz.html')
 
-@rgz.route('/registers', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        login = request.form['login']
-        password = request.form['password']
 
-        response = jsonrpc_register(login, password)
-        
-        if response['result']:
-            return redirect(url_for('rgz.rgzz'))
-        else:
-            return render_template('rgz/registers.html', error=response['error'])
-    
+@app.route('/registers')
+def registers():
     return render_template('rgz/registers.html')
 
-def jsonrpc_register(login: str, password: str):
-    if login in users:
-        return {'result': False, 'error': 'Пользователь с таким логином уже существует'}
-    
-    users[login] = password
-    return {'result': True, 'error': None}
 
-
-@rgz.route('/logins', methods=['GET', 'POST'])
+@app.route('/logins')
 def login():
-    if request.method == 'POST':
-        login = request.form['login']
-        password = request.form['password']
-        
-        response = jsonrpc_login(login, password)
-        
-        if response['result']:
-            session['user'] = login
-            return redirect(url_for('rgz.rgzz'))
-        else:
-            return render_template('rgz/logins.html', error=response['error'])
-    
     return render_template('rgz/logins.html')
 
-def jsonrpc_register(login: str, password: str):
-    if login in users:
-        return {'result': False, 'error': 'Пользователь с таким логином уже существует'}
-    
-    users[login] = password
-    return {'result': True, 'error': None}
 
-def jsonrpc_login(login: str, password: str):
-    if login not in users or users[login] != password:
-        return {'result': False, 'error': 'Неверный логин или пароль'}
-    
-    return {'result': True, 'error': None}
+@app.route('/api', methods=['POST'])
+def api_alias():
+    return api() 
 
-@rgz.route('/api/jsonrpc', methods=['POST'])
-def jsonrpc():
-    data = request.get_json()
+
+def db_connect():
+    try:
+        if app.config['DB_TYPE'] == 'postgres':
+            conn = psycopg2.connect(
+                host=app.config['DB_HOST'],
+                database=app.config['DB_NAME'],
+                user=app.config['DB_USER'],
+                password=app.config['DB_PASSWORD'],
+                port=app.config['DB_PORT']
+            )
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+        else:
+            dir_path = path.dirname(path.realpath(__file__))
+            db_path = path.join(dir_path, 'database.db')
+            conn = sqlite3.connect(db_path)
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+        return conn, cur
+    except Exception as e:
+        print(f"Database connection error: {str(e)}")
+        return None, None
+
+
+def db_close(conn, cur):
+    if conn:
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
+@app.route('/rgz/json-rpc-api/', methods=['POST'])
+def api():
+    data = request.json
+    response = {
+        'jsonrpc': '2.0',
+        'id': data.get('id')
+    }
+
     method = data.get('method')
-    params = data.get('params')
-    
+    params = data.get('params', {})
+
     if method == 'register':
-        response = jsonrpc_register(params['login'], params['password'])
-    elif method == 'login':
-        response = jsonrpc_login(params['login'], params['password'])
+        login = params.get('login')
+        password = params.get('password')
+
+        if not login or not password:
+            response['error'] = {
+                'code': 5,
+                'message': 'Username and password are required'
+            }
+            return jsonify(response)
+
+        conn, cur = db_connect()
+        if not conn:
+            response['error'] = {
+                'code': -32000,
+                'message': 'Database connection failed'
+            }
+            return jsonify(response)
+
+        try:
+            query = "SELECT * FROM users WHERE login = %s" if app.config['DB_TYPE'] == 'postgres' else \
+                    "SELECT * FROM users WHERE login = ?"
+            cur.execute(query, (login,))
+            user = cur.fetchone()
+
+            if user:
+                response['error'] = {
+                    'code': 6,
+                    'message': 'Username already exists'
+                }
+            else:
+                hashed_password = generate_password_hash(password)
+                query = "INSERT INTO users (login, password) VALUES (%s, %s)" if app.config['DB_TYPE'] == 'postgres' else \
+                        "INSERT INTO users (login, password) VALUES (?, ?)"
+                cur.execute(query, (login, hashed_password))
+                response['result'] = 'success'
+        except Exception as e:
+            response['error'] = {
+                'code': -32001,
+                'message': f'Database operation failed: {str(e)}'
+            }
+        finally:
+            db_close(conn, cur)
     else:
-        response = {'result': None, 'error': 'Метод не найден'}
-    
+        response['error'] = {
+            'code': -32601,
+            'message': 'Method not found'
+        }
+
     return jsonify(response)
+
+
+@app.route('/rgz/json-rpc-api/', methods=['POST'])
+def api():
+    data = request.json
+    response = {
+        'jsonrpc': '2.0',
+        'id': data.get('id')
+    }
+
