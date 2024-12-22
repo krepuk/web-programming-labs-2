@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 9{% endblock %}
+
+{% block main %}
+<div class="newyear-container">
+    <h1>Новогодняя открытка</h1>
+    <form method="POST" action="{{ url_for('lab9.preference') }}">
+        <input type="hidden" name="name" value="{{ name }}">
+        <input type="hidden" name="age" value="{{ age }}">
+        <label for="gender">Ваш пол:</label>
+        <select id="gender" name="gender" required>
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+        </select>
+        <button type="submit">Далее</button>
+    </form>
+</div>
+{% endblock %}

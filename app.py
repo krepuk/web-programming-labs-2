@@ -15,6 +15,8 @@ import os
 app = Flask(__name__)
 jsonrpc = JSONRPC(app, '/api')
 
+app.secret_key = 'christmas1'
+
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'супер мега ультра секретный ключ')
 app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'postgres')
 

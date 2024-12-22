@@ -2,15 +2,14 @@
 
 {% block lab %}Лабораторная работа 9{% endblock %}
 
-{% block script %}{% endblock %}
-
 {% block main %}
     <h1>Поздравления</h1>
     <body>
         <div class="container">
-            <form method="POST" action="{{ url_for('lab9.age') }}">
-                <label for="name">Как вас зовут?</label>
-                <input type="text" id="name" name="name" required>
+            <form method="POST" action="{{ url_for('lab9.gender') }}">
+                <input type="hidden" name="name" value="{{ name }}">
+                <label for="age">Сколько вам лет?</label>
+                <input type="number" id="age" name="age" required>
                 <button type="submit">Далее</button>
             </form>
         </div>
