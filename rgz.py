@@ -1,9 +1,37 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, session, url_for, current_app
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from werkzeug.security import check_password_hash, generate_password_hash
+import sqlite3
 import json
 
 rgz = Blueprint('rgz', __name__)
 
 users = {}
+
+def db_connect():
+    if current_app.config['DB_TYPE'] == 'postgres':
+        conn = psycopg2.connect(
+            host='127.0.0.1',
+            database='repuyk_kate_knowledge_base1',
+            user='repuyk_kate_knowledge_base1',
+            password='1234'
+        )
+        cur = conn.cursor(cursor_factory= RealDictCursor)
+    else:
+        dir_path = path.dirname(path.realpath(__file__))
+        db_path = path.join(dir_path, "dabase.db")
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+    return conn, cur
+
+def db_close(conn, cur):
+    conn.commit()
+    cur.close()
+    conn.close()
+
 
 @rgz.route('/rgz')
 def rgzz():
@@ -14,8 +42,7 @@ def register():
     if request.method == 'POST':
         login = request.form['login']
         password = request.form['password']
-        
-        # Вызов метода регистрации через JSON-RPC
+
         response = jsonrpc_register(login, password)
         
         if response['result']:
@@ -39,7 +66,6 @@ def login():
         login = request.form['login']
         password = request.form['password']
         
-        # Вызов метода входа через JSON-RPC
         response = jsonrpc_login(login, password)
         
         if response['result']:
