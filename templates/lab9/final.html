@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 
 {% block lab %}Лабораторная работа 9{% endblock %}
-
 {% block main %}
 <div class="newyear-container">
-    <h1>Новогоднее поздравление</h1>
-    <p>{{ message|safe }}</p> <!-- Используем фильтр |safe для отображения HTML-тегов -->
+    <h1>🎄Новогоднее поздравление🎄</h1>
+    <p>{{ message|safe }}</p> 
     <img src="{{ image }}" alt="Подарок">
     <form method="POST" action="{{ url_for('lab9.reset') }}">
         <button type="submit">Сбросить и начать заново</button>

@@ -194,3 +194,9 @@ h2 {
     display: block; 
     margin: 0 auto;
 }
+
+.button-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px; 
+}

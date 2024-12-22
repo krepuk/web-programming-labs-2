@@ -5,7 +5,13 @@ lab9 = Blueprint('lab9', __name__)
 
 @lab9.route('/lab9')
 def main():
-        return render_template('lab9/index.html')
+    if 'last_greeting' in session and 'last_image' in session:
+        greeting = session['last_greeting']
+        image = session['last_image']
+        return render_template('lab9/final.html', message=greeting, image=image)
+
+    return render_template('lab9/index.html')
+
 
 
 @lab9.route('/age', methods=['POST'])
@@ -71,13 +77,3 @@ def reset():
     session.pop('last_greeting', None)
     session.pop('last_image', None)
     return redirect(url_for('lab9.main'))
-
-
-@lab9.route('/lab9')
-def main():
-    if 'last_greeting' in session and 'last_image' in session:
-        greeting = session['last_greeting']
-        image = session['last_image']
-        return render_template('lab9/final.html', message=greeting, image=image)
-
-    return render_template('lab9/index.html')
