@@ -1,4 +1,6 @@
 from flask import Flask, url_for, redirect, render_template, abort
+from flask_sqlalchemy import SQLAlchemy
+from db import db
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
@@ -10,6 +12,7 @@ from lab8 import lab8
 from lab9 import lab9
 from flask_jsonrpc import JSONRPC
 import os
+from os import path
 
 app = Flask(__name__)
 
@@ -18,9 +21,24 @@ jsonrpc = JSONRPC(app, '/api')
 app.secret_key = 'christmas1'
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'супер мега ультра секретный ключ')
+app.config['DB_TYPE'] = os.getenv ('DB_TYPE', 'postgres') 
 
+if app.config['DB_TYPE'] == 'postgres':
+    db_name = 'kate_repuk_orm'
+    db_user = 'repuk_kate_orm'
+    db_password = '123'
+    host_ip = '127.0.0.1'
+    host_port = '5432'
 
-# Регистрируем Blueprint'ы
+    app.config['SQLALCHEMY_DATABASE_URI'] = \
+        f'postgresql://{db_user}:{db_password}@{host_ip}:{host_port}/{db_name}'
+else:
+    dir_path = path.dirname(path.realpath(__file__))
+    db_path = path.join(dir_path, 'repuk_kate_orm.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+
+db.init_app(app)
+
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
