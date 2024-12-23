@@ -149,3 +149,30 @@ def delete_article(article_id):
     db.session.delete(article)
     db.session.commit()
     return redirect('/lab8/articles/')
+
+
+@lab8.route('/lab8/articles/edit/<int:article_id>', methods=['GET', 'POST'])
+@login_required
+def edit_article(article_id):
+    article = articli.query.filter_by(id=article_id, login_id=current_user.id).first()
+    if not article:
+        abort(404)
+
+    if request.method == 'GET':
+        return render_template('lab8/edit.html', article=article)
+
+    title = request.form.get('title')
+    article_text = request.form.get('article_text')
+    is_public = request.form.get('is_public') == '1'
+    is_favorite = request.form.get('is_favorite') == '1'
+
+    if not (title and article_text):
+        return render_template('lab8/edit.html', article=article, error='Заполните все поля!')
+
+    article.title = title
+    article.article_text = article_text
+    article.is_public = is_public
+    article.is_favorite = is_favorite
+
+    db.session.commit()
+    return redirect('/lab8/articles/')
