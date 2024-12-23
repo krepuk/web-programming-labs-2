@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -33,9 +33,61 @@ def registers():
     return render_template('rgz/registers.html')
 
 
-@app.route('/logins')
+@app.route('/logins', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        # Получаем данные с формы
+        login = request.form.get('login')
+        password = request.form.get('password')
+
+        # Выполняем аутентификацию через JSON-RPC
+        data = {
+            "jsonrpc": "2.0",
+            "method": "login",
+            "params": {"login": login, "password": password},
+            "id": 1
+        }
+        response = api(data)
+
+        if 'result' in response and 'token' in response['result']:
+            token = response['result']['token']
+            return redirect(url_for('success', token=token))  
+
+        else:
+            error_message = response.get('error', {}).get('message', 'Unknown error')
+            return render_template('rgz/logins.html', error=error_message)
+
     return render_template('rgz/logins.html')
+
+
+@app.route('/success')
+def success():
+    token = request.args.get('token')  
+    if not token:
+        return redirect(url_for('login'))  
+
+    try:
+        id = validate_token(token)  
+        conn, cur = db_connect()
+        
+        if not conn:
+            return render_template('rgz/success.html', error="Не удалось подключиться к базе данных.")
+        
+        try:
+            query = "SELECT * FROM users"
+            cur.execute(query)
+            users = cur.fetchall() 
+            
+            return render_template('rgz/success.html', users=users)  
+
+        except Exception as e:
+            return render_template('rgz/success.html', error=f"Ошибка при получении пользователей: {str(e)}")
+        
+        finally:
+            db_close(conn, cur)
+
+    except Exception as e:
+        return redirect(url_for('login'))  
 
 
 @app.route('/api', methods=['POST'])

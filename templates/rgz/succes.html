@@ -1,9 +1,17 @@
-{% extends "base.html" %}
-
-{% block lab %}Лабораторная работа 5{% endblock %}
+{% extends "base_rgz.html" %}
 
 {% block main %}
     <h1>Добро пожаловать!</h1>
-    <p>Вы успешно вошли в систему.</p>
+    <p>Вы успешно авторизовались</p>
+    <h2>Список всех пользователей</h2>
+    {% if users %}
+    <ul>
+        {% for user in users %}
+            <li>{{ user.login }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет пользователей в базе данных.</p>
+{% endif %}
     <a href="/rgz">Вернуться на главную страницу</a>
 {% endblock %}
