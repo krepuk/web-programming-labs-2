@@ -34,12 +34,8 @@
         <div>
             <button onclick="window.location.href='/lab8/create'">Создать статью</button>
         </div>
-        <div class="user-info">
-            {% if login %}
-                {{ login }}
-            {% else %}
-                Анонимус
-            {% endif %}
+        <div>
+            {{ user }}
         </div>
     </div>
 

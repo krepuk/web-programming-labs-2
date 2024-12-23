@@ -30,7 +30,7 @@ jsonrpc = JSONRPC(app, '/api')
 
 app.secret_key = 'christmas1'
 
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'супер мега ультра секретный ключ')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'super_mega_ultra_cluch')
 app.config['DB_TYPE'] = os.getenv ('DB_TYPE', 'postgres') 
 
 if app.config['DB_TYPE'] == 'postgres':
