@@ -134,7 +134,7 @@ def api():
         if not login or not password:
             response['error'] = {
                 'code': 5,
-                'message': 'Username and password are required'
+                'message': 'Введите логин/пароль'
             }
             return jsonify(response)
 
@@ -155,7 +155,7 @@ def api():
             if user:
                 response['error'] = {
                     'code': 6,
-                    'message': 'Username already exists'
+                    'message': 'Такой пользователь уже существует'
                 }
             else:
                 hashed_password = generate_password_hash(password)

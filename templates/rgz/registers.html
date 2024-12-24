@@ -48,7 +48,7 @@
                 if (data.result) {
                     alert('Регистрация прошла успешно!');
                 } else if (data.error) {
-                    alert('Ошибка: ' + JSON.stringify(data.error));
+                    alert(data.error.message);
                 } else {
                     alert('Неизвестная ошибка: ' + JSON.stringify(data));
                 }
