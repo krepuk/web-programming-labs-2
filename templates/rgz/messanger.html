@@ -19,7 +19,7 @@
         </div>
 
         <div id="user-info" style="width: 20%; padding-left: 20px;">
-            <h3>Добро пожаловать, <span id="username-display"></span></h3>
+            <h3>Добро пожаловать, <span id="username-display">{{ username }}</span></h3>
             <button id="logout-button" style="padding: 10px; width: 100%;">Выйти</button>
         </div>
     </div>
@@ -29,8 +29,7 @@
             fetch('/api', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('auth_token')}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     jsonrpc: '2.0',
@@ -68,8 +67,7 @@
             fetch('/api', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('auth_token')}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     jsonrpc: '2.0',
@@ -104,8 +102,7 @@
                 fetch('/api', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Token ${localStorage.getItem('auth_token')}`
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         jsonrpc: '2.0',
@@ -127,29 +124,29 @@
         }
 
         function logout() {
-            localStorage.removeItem('auth_token');
-            window.location.href = '/logins';
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'rgz/logins';
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при выходе из системы:', error);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchUsers();
 
-            const token = localStorage.getItem('auth_token');
-            if (token) {
-                const username = decodeJwt(token).username;
-                document.getElementById('username-display').textContent = username;
-            }
-
             document.getElementById('send-message').addEventListener('click', sendMessage);
 
             document.getElementById('logout-button').addEventListener('click', logout);
         });
-
-        function decodeJwt(token) {
-            const payload = token.split('.')[1];
-            const decoded = atob(payload);
-            return JSON.parse(decoded);
-        }
     </script>
     {%endblock%}
 {% endblock %}

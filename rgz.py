@@ -1,18 +1,13 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, session
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from traitlets import This
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
-import jwt
 from os import path
-from functools import wraps
-from datetime import datetime, timedelta
-
-
-SECRET_KEY = '040520240600'
 
 app = Flask(__name__)
+
+app.secret_key = '040520240600'
 
 app.config.update({
     'DB_TYPE': 'postgres',  
@@ -25,8 +20,6 @@ app.config.update({
 
 
 @app.route('/') 
-
-
 @app.route('/rgz')
 def rgzz():
     return render_template('rgz/rgz.html')
@@ -47,44 +40,12 @@ def api_alias():
     return api() 
 
 
-
-def generate_token(username):
-    token = jwt.encode({
-        'username': username
-    }, SECRET_KEY, algorithm = 'HS256')
-
-    return token
-
-def validate_token(token):
-    try:
-        data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        return data['username']
-    except jwt.ExpiredSignatureError:
-        return jsonify({'error': 'Token has expired'}), 403
-    except jwt.InvalidTokenError:
-        return jsonify({'error': 'Invalid token'}), 403
-    
-def token_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token:
-            return jsonify({'error': 'Token is missing'}), 403
-        
-        token = token.split(" ")[1] if token else ""
-        try:
-            username = validate_token(token)
-        except Exception as e:
-            return jsonify({'error': str(e)}), 403
-
-        return f(username, *args, **kwargs)
-    return decorated_function
-
-
-@app.route('/messanger')
-@token_required
-def messanger(username):
-    return render_template('messanger.html', username = username)
+@app.route('/rgz/messanger')
+def messanger():
+    if 'username' in session:
+        return render_template('rgz/messanger.html', username=session['username'])
+    else:
+        return redirect('/rgz/logins')  
 
 
 def db_connect():
@@ -115,6 +76,7 @@ def db_close(conn, cur):
         conn.commit()
         cur.close()
         conn.close()
+
 
 @app.route('/rgz/json-rpc-api/', methods=['POST'])
 def api():
@@ -176,12 +138,12 @@ def api():
         password = params.get('password')
 
         if not login or not password:
-                response['error'] = {
-                    'code': 5,
-                    'message': 'Username and password are required'
-                }
-                return jsonify(response)
-    
+            response['error'] = {
+                'code': 5,
+                'message': 'Введите логин и пароль'
+            }
+            return jsonify(response)
+
         conn, cur = db_connect()
         if not conn:
             response['error'] = {
@@ -189,31 +151,30 @@ def api():
                 'message': 'Database connection failed'
             }
             return jsonify(response)
-        
+
         try:
             query = "SELECT * FROM users WHERE login = %s" if app.config["DB_TYPE"] == 'postgres' else \
                     "SELECT * FROM users WHERE login = ?"
             cur.execute(query, (login,))
             user = cur.fetchone()
-            
-            if not user: 
+
+            if not user:
                 response['error'] = {
                     'code': 7,
-                    'message': 'Invalid login or password'
+                    'message': 'Неверный логин или пароль'
                 }
-            else: 
+            else:
                 stored_password = user['password']
                 if check_password_hash(stored_password, password):
-                    token = generate_token(user['login'])
+                    session['username'] = user['login']
                     response['result'] = {
-                        'message': 'Авторизация успешна',
-                        'token': token 
+                        'message': 'Авторизация успешна'
                     }
                 else:
                     response['error'] = {
                         'code': 7,
-                        'message': 'Invalid login or password'
-                    }
+                        'message': 'Неверный логин или пароль'
+            }
         except Exception as e:
             response['error'] = {
                 'code': -32001,
@@ -221,103 +182,6 @@ def api():
             }
         finally:
             db_close(conn, cur)
-
-    elif method == 'get_users':
-        conn, cur = db_connect()
-        if not conn:
-            response['error'] = {
-                'code': -32000,
-                'message': 'Database connection failed'
-            }
-            return jsonify(response)
-
-        try:
-            query = "SELECT login FROM users" if app.config['DB_TYPE'] == 'postgres' else \
-                    "SELECT login FROM users"
-            cur.execute(query)
-            users = cur.fetchall()
-
-            response['result'] = {'users': [{'login': user['login']} for user in users]}
-        except Exception as e:
-            response['error'] = {
-                'code': -32001,
-                'message': f'Database operation failed: {str(e)}'
-            }
-        finally:
-            db_close(conn, cur)
-
-    elif method == 'get_messages':
-        selected_user = params.get('user')
-        username = params.get('username')
-
-        if not selected_user or not username:
-            response['error'] = {
-                'code': 5,
-                'message': 'Both username and selected user are required'
-            }
-            return jsonify(response)
-
-        conn, cur = db_connect()
-        if not conn:
-            response['error'] = {
-                'code': -32000,
-                'message': 'Database connection failed'
-            }
-            return jsonify(response)
-
-        try:
-            query = "SELECT * FROM messages WHERE (sender = %s AND receiver = %s) OR (sender = %s AND receiver = %s)" if app.config['DB_TYPE'] == 'postgres' else \
-                    "SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?)"
-            cur.execute(query, (username, selected_user, selected_user, username))
-            messages = cur.fetchall()
-
-            response['result'] = {'messages': [{'text': msg['text']} for msg in messages]}
-        except Exception as e:
-            response['error'] = {
-                'code': -32001,
-                'message': f'Database operation failed: {str(e)}'
-            }
-        finally:
-            db_close(conn, cur)
-
-    elif method == 'send_message':
-        selected_user = params.get('user')
-        message_text = params.get('message')
-        username = params.get('username')
-
-        if not selected_user or not message_text or not username:
-            response['error'] = {
-                'code': 5,
-                'message': 'Username, selected user and message are required'
-            }
-            return jsonify(response)
-
-        conn, cur = db_connect()
-        if not conn:
-            response['error'] = {
-                'code': -32000,
-                'message': 'Database connection failed'
-            }
-            return jsonify(response)
-
-        try:
-            query = "INSERT INTO messages (sender, receiver, text) VALUES (%s, %s, %s)" if app.config['DB_TYPE'] == 'postgres' else \
-                    "INSERT INTO messages (sender, receiver, text) VALUES (?, ?, ?)"
-            cur.execute(query, (username, selected_user, message_text))
-
-            response['result'] = 'Message sent successfully'
-        except Exception as e:
-            response['error'] = {
-                'code': -32001,
-                'message': f'Database operation failed: {str(e)}'
-            }
-        finally:
-            db_close(conn, cur)
-
-    else:
-        response['error'] = {
-            'code': -32601,
-            'message': 'Method not found'
-        }
 
     return jsonify(response)
+  

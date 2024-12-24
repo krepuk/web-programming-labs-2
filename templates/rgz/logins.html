@@ -1,6 +1,7 @@
 {% extends "base_rgz.html" %}
+
 {% block main %}
-    <h1>Вход в систему</h1>
+    <h1 style="text-align: center;">Вход в систему</h1>
     <form id="loginForm" style="display: flex; flex-direction: column; align-items: center;">
         <div style="margin-bottom: 10px;">
             <label>
@@ -28,11 +29,10 @@
             const login = document.getElementById('login').value;
             const password = document.getElementById('password').value;
 
-            fetch('/api', {
+            fetch('/rgz/json-rpc-api/', {  // Исправлен путь к API
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('auth_token')}`
                 },
                 body: JSON.stringify({
                     jsonrpc: '2.0',
@@ -46,11 +46,12 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.result && data.result.token) {
-                    localStorage.setItem('auth_token', data.result.token)
-                    window.location.href = '/messanger';
+                if (data.result && data.result.message === 'Авторизация успешна') {
+                    window.location.href = 'rgz/messanger';
+                } else if (data.error) {
+                    alert(data.error.message);  
                 } else {
-                    alert('Неверный логин или пароль')
+                    alert('Неизвестная ошибка');
                 }
             })
             .catch(error => {
