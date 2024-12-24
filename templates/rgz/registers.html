@@ -20,7 +20,7 @@
             <p style="color: red;">{{ error }}</p>
         {% endif %}
     </div>
-
+    {%block script%}
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -59,4 +59,5 @@
             });
         });
     </script>
+    {%endblock%}
 {% endblock %}

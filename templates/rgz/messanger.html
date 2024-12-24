@@ -1,0 +1,155 @@
+{% extends "base_rgz.html" %}
+
+{% block main %}
+    <div id="messenger-container" style="display: flex; justify-content: space-between; padding: 20px;">
+        <div id="user-list" style="width: 25%; border-right: 1px solid #ddd; padding-right: 20px;">
+            <h3>Пользователи</h3>
+            <ul id="users" style="list-style-type: none; padding-left: 0;">
+            </ul>
+        </div>
+
+        <div id="chat-box" style="flex-grow: 1; padding-left: 20px; padding-right: 20px;">
+            <h3 id="chat-title">Выберите пользователя для чата</h3>
+            <div id="messages" style="border: 1px solid #ddd; height: 400px; overflow-y: scroll; padding: 10px;">
+            </div>
+            <div style="margin-top: 20px;">
+                <input id="message-input" type="text" placeholder="Введите сообщение..." style="width: 80%; padding: 5px;">
+                <button id="send-message" style="padding: 5px 10px;">Отправить</button>
+            </div>
+        </div>
+
+        <div id="user-info" style="width: 20%; padding-left: 20px;">
+            <h3>Добро пожаловать, <span id="username-display"></span></h3>
+            <button id="logout-button" style="padding: 10px; width: 100%;">Выйти</button>
+        </div>
+    </div>
+    {%block script%}
+    <script>
+        function fetchUsers() {
+            fetch('/api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${localStorage.getItem('auth_token')}`
+                },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'get_users',
+                    params: {},
+                    id: 3
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result && data.result.users) {
+                    const userList = document.getElementById('users');
+                    userList.innerHTML = ''; 
+
+                    data.result.users.forEach(user => {
+                        const li = document.createElement('li');
+                        li.textContent = user.login;
+                        li.style.cursor = 'pointer';
+                        li.onclick = function() {
+                            openChat(user.login);
+                        };
+                        userList.appendChild(li);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке пользователей:', error);
+            });
+        }
+
+        function openChat(selectedUser) {
+            const chatTitle = document.getElementById('chat-title');
+            chatTitle.textContent = `Чат с ${selectedUser}`;
+
+            fetch('/api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${localStorage.getItem('auth_token')}`
+                },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'get_messages',  
+                    params: { user: selectedUser },
+                    id: 4
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messagesContainer = document.getElementById('messages');
+                messagesContainer.innerHTML = ''; 
+
+                if (data.result && data.result.messages) {
+                    data.result.messages.forEach(msg => {
+                        const div = document.createElement('div');
+                        div.textContent = msg.text;
+                        messagesContainer.appendChild(div);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке сообщений:', error);
+            });
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('message-input').value;
+            const selectedUser = document.getElementById('chat-title').textContent.replace('Чат с ', '');
+
+            if (message && selectedUser) {
+                fetch('/api', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Token ${localStorage.getItem('auth_token')}`
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        method: 'send_message', 
+                        params: { user: selectedUser, message: message },
+                        id: 5
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result) {
+                        openChat(selectedUser); 
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при отправке сообщения:', error);
+                });
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            window.location.href = '/logins';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUsers();
+
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                const username = decodeJwt(token).username;
+                document.getElementById('username-display').textContent = username;
+            }
+
+            document.getElementById('send-message').addEventListener('click', sendMessage);
+
+            document.getElementById('logout-button').addEventListener('click', logout);
+        });
+
+        function decodeJwt(token) {
+            const payload = token.split('.')[1];
+            const decoded = atob(payload);
+            return JSON.parse(decoded);
+        }
+    </script>
+    {%endblock%}
+{% endblock %}

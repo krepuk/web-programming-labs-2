@@ -21,7 +21,7 @@
         {% endif %}
     </div>
     <a href="/rgz">Назад</a>
-
+    {%block script%}
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -33,6 +33,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Token ${localStorage.getItem('auth_token')}`
                 },
                 body: JSON.stringify({
                     jsonrpc: '2.0',
@@ -46,12 +47,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.result) {
-                    alert('Авторизация прошла успешно!');
-                } else if (data.error) {
-                    alert('Ошибка: ' + JSON.stringify(data.error));
+                if (data.result && data.result.token) {
+                    localStorage.setItem('auth_token', data.result.token)
+                    window.location.href = '/messanger';
                 } else {
-                    alert('Неизвестная ошибка: ' + JSON.stringify(data));
+                    alert('Неверный логин или пароль')
                 }
             })
             .catch(error => {
@@ -60,4 +60,5 @@
             });
         });
     </script>
+    {%endblock%}
 {% endblock %}
