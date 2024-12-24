@@ -1,7 +1,7 @@
+{% extends "base_rgz.html" %}
 
-
-
-    <div id="messenger-container">
+{% block main %}
+<div id="messenger-container">
         <div id="user-list">
             <h3>Пользователи</h3>
             <ul id="users">
@@ -26,7 +26,7 @@
 
     {%block script%}
     <script>
-        let currentChatUser = null;  // Хранит текущего пользователя, с которым ведётся чат
+        let currentChatUser = null; 
 
         function fetchUsers() {
             fetch('/api', {
@@ -64,11 +64,10 @@
         }
 
         function openChat(selectedUser) {
-            currentChatUser = selectedUser;  // Сохраняем текущего пользователя
+            currentChatUser = selectedUser; 
             const chatTitle = document.getElementById('chat-title');
             chatTitle.textContent = `Чат с ${selectedUser}`;
 
-            // Загружаем сообщения для текущего чата
             loadMessages(selectedUser);
         }
         function loadMessages(selectedUser) {
@@ -110,10 +109,10 @@
         
             if (msg.sender === '{{ username }}') {
                 div.style.textAlign = 'right';
-                div.style.backgroundColor = '#d3f9d8';
+                div.style.backgroundColor = '#ffe9f4';
             } else {
                 div.style.textAlign = 'left';
-                div.style.backgroundColor = '#f1f3f5';
+                div.style.backgroundColor = '#cff0ec';
             }
         
             div.style.padding = '10px';
@@ -123,21 +122,18 @@
         
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
-        
+
         function addMessageToChat(msg) {
             const messagesContainer = document.getElementById('messages');
             const div = document.createElement('div');
             div.textContent = msg.text;
 
-            // Определяем, кто автор сообщения
             if (msg.sender === '{{ username }}') {
-                // Сообщение от текущего пользователя (справа)
                 div.style.textAlign = 'right';
-                div.style.backgroundColor = '#d3f9d8';  // Светло-зелёный фон
+                div.style.backgroundColor = '#d3f9d8';  
             } else {
-                // Сообщение от собеседника (слева)
                 div.style.textAlign = 'left';
-                div.style.backgroundColor = '#f1f3f5';  // Светло-серый фон
+                div.style.backgroundColor = '#f1f3f5';  
             }
 
             div.style.padding = '10px';
@@ -145,13 +141,12 @@
             div.style.borderRadius = '10px';
             messagesContainer.appendChild(div);
 
-            // Прокручиваем чат вниз, чтобы видеть последнее сообщение
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function sendMessage() {
             const message = document.getElementById('message-input').value;
-            const selectedUser = currentChatUser;  // Используем текущего пользователя
+            const selectedUser = currentChatUser; 
 
             if (message && selectedUser) {
                 fetch('/json-rpc-api/messages', {
@@ -174,7 +169,6 @@
                 .then(data => {
                     if (data.result) {
                         document.getElementById('message-input').value = '';  
-                        // Добавляем новое сообщение в чат
                         addMessageToChat({
                             sender: '{{ username }}',
                             text: message
@@ -191,14 +185,19 @@
         }
 
         function reloadChat() {
-            // Перезагружаем список пользователей
             fetchUsers();
 
-            // Если текущий чат открыт, перезагружаем сообщения
             if (currentChatUser) {
                 loadMessages(currentChatUser);
             }
         }
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUsers();
+
+            document.getElementById('send-message').addEventListener('click', sendMessage);
+
+            reloadChat();
+        });
 
         document.getElementById('logout-button').addEventListener('click', function() {
             fetch('/logout', {
@@ -219,13 +218,6 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchUsers();
-
-            document.getElementById('send-message').addEventListener('click', sendMessage);
-
-            // Перезагружаем чат после выхода и повторного входа
-            reloadChat();
-        });
     </script>
     {%endblock%}
+{% endblock %}
