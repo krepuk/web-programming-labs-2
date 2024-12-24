@@ -27,12 +27,12 @@ def rgzz():
 
 @app.route('/registers')
 def registers():
-    return render_template('rgz/registers.html')
+    return render_template('/rgz/registers.html')
 
 
-@app.route('/logins')
+@app.route('/rgz/logins')
 def logins():
-    return render_template('rgz/logins.html')
+    return render_template('/rgz/logins.html')
 
 
 @app.route('/api', methods=['POST'])
@@ -43,7 +43,7 @@ def api_alias():
 @app.route('/rgz/messanger')
 def messanger():
     if 'username' in session:
-        return render_template('rgz/messanger.html', username=session['username'])
+        return render_template('/rgz/messanger.html', username=session['username'])
     else:
         return redirect('/rgz/logins')  
 
@@ -185,3 +185,8 @@ def api():
 
     return jsonify(response)
   
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('username', None)
+    return redirect('/rgz/logins')

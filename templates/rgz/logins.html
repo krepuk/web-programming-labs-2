@@ -29,7 +29,7 @@
             const login = document.getElementById('login').value;
             const password = document.getElementById('password').value;
 
-            fetch('/rgz/json-rpc-api/', {  // Исправлен путь к API
+            fetch('/rgz/json-rpc-api/', {  
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,7 +47,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.result && data.result.message === 'Авторизация успешна') {
-                    window.location.href = 'rgz/messanger';
+                    window.location.href = '/rgz/messanger';
                 } else if (data.error) {
                     alert(data.error.message);  
                 } else {
