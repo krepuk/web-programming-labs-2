@@ -25,7 +25,7 @@ def rgzz():
     return render_template('rgz/rgz.html')
 
 
-@app.route('/registers')
+@app.route('/rgz/registers')
 def registers():
     return render_template('/rgz/registers.html')
 
@@ -174,6 +174,31 @@ def api():
                     response['error'] = {
                         'code': 7,
                         'message': 'Неверный логин или пароль'
+                    }
+        except Exception as e:
+            response['error'] = {
+                'code': -32001,
+                'message': f'Database operation failed: {str(e)}'
+            }
+        finally:
+            db_close(conn, cur)
+
+    elif method == 'get_users':
+        conn, cur = db_connect()
+        if not conn:
+            response['error'] = {
+                'code': -32000,
+                'message': 'Database connection failed'
+            }
+            return jsonify(response)
+
+        try:
+            query = "SELECT login FROM users"
+            cur.execute(query)
+            users = cur.fetchall()
+
+            response['result'] = {
+                'users': [{'login': user['login']} for user in users]
             }
         except Exception as e:
             response['error'] = {
@@ -184,7 +209,98 @@ def api():
             db_close(conn, cur)
 
     return jsonify(response)
-  
+
+
+@app.route('/json-rpc-api/messages', methods=['POST'])
+def api_message():
+    data = request.json
+    response = {
+        'jsonrpc': '2.0',
+        'id': data.get('id')
+    }
+
+    method = data.get('method')
+    params = data.get('params', {})
+
+    if method == 'send_message':
+        sender = params.get('sender')
+        receiver = params.get('receiver')
+        message = params.get('message')
+
+        if not sender or not receiver or not message:
+            response['error'] = {
+                'code': 5,
+                'message': 'Необходимо указать отправителя, получателя и текст сообщения'
+            }
+            return jsonify(response)
+
+        conn, cur = db_connect()
+        if not conn:
+            response['error'] = {
+                'code': -32000,
+                'message': 'Database connection failed'
+            }
+            return jsonify(response)
+
+        try:
+            query = "INSERT INTO messages (sender, receiver, text) VALUES (%s, %s, %s)" if app.config['DB_TYPE'] == 'postgres' else \
+                    "INSERT INTO messages (sender, receiver, text) VALUES (?, ?, ?)"
+            cur.execute(query, (sender, receiver, message))
+            response['result'] = 'success'
+        except Exception as e:
+            response['error'] = {
+                'code': -32001,
+                'message': f'Database operation failed: {str(e)}'
+            }
+        finally:
+            db_close(conn, cur)
+
+    elif method == 'get_messages':
+        sender = params.get('sender')
+        receiver = params.get('receiver')
+
+        if not sender or not receiver:
+            response['error'] = {
+                'code': 5,
+                'message': 'Необходимо указать отправителя и получателя'
+            }
+            return jsonify(response)
+
+        conn, cur = db_connect()
+        if not conn:
+            response['error'] = {
+                'code': -32000,
+                'message': 'Database connection failed'
+            }
+            return jsonify(response)
+
+        try:
+            query = """
+                SELECT * FROM messages 
+                WHERE (sender = %s AND receiver = %s) 
+                OR (sender = %s AND receiver = %s)
+                ORDER BY timestamp ASC
+            """ if app.config['DB_TYPE'] == 'postgres' else """
+                SELECT * FROM messages 
+                WHERE (sender = ? AND receiver = ?) 
+                OR (sender = ? AND receiver = ?)
+                ORDER BY timestamp ASC
+            """
+            cur.execute(query, (sender, receiver, receiver, sender))
+            messages = cur.fetchall()
+
+            response['result'] = {
+                'messages': [{'sender': msg['sender'], 'receiver': msg['receiver'], 'text': msg['text'], 'timestamp': msg['timestamp']} for msg in messages]
+            }
+        except Exception as e:
+            response['error'] = {
+                'code': -32001,
+                'message': f'Database operation failed: {str(e)}'
+            }
+        finally:
+            db_close(conn, cur)
+
+    return jsonify(response)
 
 @app.route('/logout', methods=['POST'])
 def logout():

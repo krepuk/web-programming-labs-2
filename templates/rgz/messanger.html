@@ -1,30 +1,33 @@
-{% extends "base_rgz.html" %}
 
-{% block main %}
-    <div id="messenger-container" style="display: flex; justify-content: space-between; padding: 20px;">
-        <div id="user-list" style="width: 25%; border-right: 1px solid #ddd; padding-right: 20px;">
+
+
+    <div id="messenger-container">
+        <div id="user-list">
             <h3>Пользователи</h3>
-            <ul id="users" style="list-style-type: none; padding-left: 0;">
+            <ul id="users">
             </ul>
         </div>
 
-        <div id="chat-box" style="flex-grow: 1; padding-left: 20px; padding-right: 20px;">
+        <div id="chat-box">
             <h3 id="chat-title">Выберите пользователя для чата</h3>
-            <div id="messages" style="border: 1px solid #ddd; height: 400px; overflow-y: scroll; padding: 10px;">
+            <div id="messages">
             </div>
-            <div style="margin-top: 20px;">
-                <input id="message-input" type="text" placeholder="Введите сообщение..." style="width: 80%; padding: 5px;">
-                <button id="send-message" style="padding: 5px 10px;">Отправить</button>
+            <div>
+                <input id="message-input" type="text" placeholder="Введите сообщение...">
+                <button id="send-message">Отправить</button>
             </div>
         </div>
 
-        <div id="user-info" style="width: 20%; padding-left: 20px;">
+        <div id="user-info">
             <h3>Добро пожаловать, <span id="username-display">{{ username }}</span></h3>
-            <button id="logout-button" style="padding: 10px; width: 100%;">Выйти</button>
+            <button id="logout-button">Выйти</button>
         </div>
     </div>
+
     {%block script%}
     <script>
+        let currentChatUser = null;  // Хранит текущего пользователя, с которым ведётся чат
+
         function fetchUsers() {
             fetch('/api', {
                 method: 'POST',
@@ -61,10 +64,15 @@
         }
 
         function openChat(selectedUser) {
+            currentChatUser = selectedUser;  // Сохраняем текущего пользователя
             const chatTitle = document.getElementById('chat-title');
             chatTitle.textContent = `Чат с ${selectedUser}`;
 
-            fetch('/api', {
+            // Загружаем сообщения для текущего чата
+            loadMessages(selectedUser);
+        }
+        function loadMessages(selectedUser) {
+            fetch('/json-rpc-api/messages', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -72,7 +80,10 @@
                 body: JSON.stringify({
                     jsonrpc: '2.0',
                     method: 'get_messages',  
-                    params: { user: selectedUser },
+                    params: { 
+                        sender: '{{ username }}',  
+                        receiver: selectedUser     
+                    },
                     id: 4
                 })
             })
@@ -80,12 +91,10 @@
             .then(data => {
                 const messagesContainer = document.getElementById('messages');
                 messagesContainer.innerHTML = ''; 
-
+        
                 if (data.result && data.result.messages) {
                     data.result.messages.forEach(msg => {
-                        const div = document.createElement('div');
-                        div.textContent = msg.text;
-                        messagesContainer.appendChild(div);
+                        addMessageToChat(msg);
                     });
                 }
             })
@@ -93,13 +102,59 @@
                 console.error('Ошибка при загрузке сообщений:', error);
             });
         }
+        
+        function addMessageToChat(msg) {
+            const messagesContainer = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.textContent = msg.text;
+        
+            if (msg.sender === '{{ username }}') {
+                div.style.textAlign = 'right';
+                div.style.backgroundColor = '#d3f9d8';
+            } else {
+                div.style.textAlign = 'left';
+                div.style.backgroundColor = '#f1f3f5';
+            }
+        
+            div.style.padding = '10px';
+            div.style.marginBottom = '10px';
+            div.style.borderRadius = '10px';
+            messagesContainer.appendChild(div);
+        
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function addMessageToChat(msg) {
+            const messagesContainer = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.textContent = msg.text;
+
+            // Определяем, кто автор сообщения
+            if (msg.sender === '{{ username }}') {
+                // Сообщение от текущего пользователя (справа)
+                div.style.textAlign = 'right';
+                div.style.backgroundColor = '#d3f9d8';  // Светло-зелёный фон
+            } else {
+                // Сообщение от собеседника (слева)
+                div.style.textAlign = 'left';
+                div.style.backgroundColor = '#f1f3f5';  // Светло-серый фон
+            }
+
+            div.style.padding = '10px';
+            div.style.marginBottom = '10px';
+            div.style.borderRadius = '10px';
+            messagesContainer.appendChild(div);
+
+            // Прокручиваем чат вниз, чтобы видеть последнее сообщение
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
 
         function sendMessage() {
             const message = document.getElementById('message-input').value;
-            const selectedUser = document.getElementById('chat-title').textContent.replace('Чат с ', '');
+            const selectedUser = currentChatUser;  // Используем текущего пользователя
 
             if (message && selectedUser) {
-                fetch('/api', {
+                fetch('/json-rpc-api/messages', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -107,19 +162,41 @@
                     body: JSON.stringify({
                         jsonrpc: '2.0',
                         method: 'send_message', 
-                        params: { user: selectedUser, message: message },
+                        params: { 
+                            sender: '{{ username }}',  
+                            receiver: selectedUser,    
+                            message: message           
+                        },
                         id: 5
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.result) {
-                        openChat(selectedUser); 
+                        document.getElementById('message-input').value = '';  
+                        // Добавляем новое сообщение в чат
+                        addMessageToChat({
+                            sender: '{{ username }}',
+                            text: message
+                        });
+                    } else if (data.error) {
+                        alert(data.error.message);
                     }
                 })
                 .catch(error => {
                     console.error('Ошибка при отправке сообщения:', error);
+                    alert('Произошла ошибка при отправке сообщения.');
                 });
+            }
+        }
+
+        function reloadChat() {
+            // Перезагружаем список пользователей
+            fetchUsers();
+
+            // Если текущий чат открыт, перезагружаем сообщения
+            if (currentChatUser) {
+                loadMessages(currentChatUser);
             }
         }
 
@@ -132,7 +209,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = '/rgz/logins';  // Перенаправляем на страницу входа
+                    window.location.href = '/rgz/logins'; 
                 } else {
                     console.error('Ошибка при выходе из системы:', response.statusText);
                 }
@@ -142,13 +219,13 @@
             });
         });
 
-        
         document.addEventListener('DOMContentLoaded', () => {
             fetchUsers();
 
             document.getElementById('send-message').addEventListener('click', sendMessage);
 
+            // Перезагружаем чат после выхода и повторного входа
+            reloadChat();
         });
     </script>
     {%endblock%}
-{% endblock %}
