@@ -48,6 +48,12 @@ def messanger():
         return redirect('/rgz/logins')  
 
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('username', None)
+    return redirect('/rgz/logins')
+
+
 def db_connect():
     try:
         if app.config['DB_TYPE'] == 'postgres':
@@ -218,7 +224,7 @@ def api_message():
         'jsonrpc': '2.0',
         'id': data.get('id')
     }
-
+    
     method = data.get('method')
     params = data.get('params', {})
 
@@ -246,14 +252,18 @@ def api_message():
             query = "INSERT INTO messages (sender, receiver, text) VALUES (%s, %s, %s)" if app.config['DB_TYPE'] == 'postgres' else \
                     "INSERT INTO messages (sender, receiver, text) VALUES (?, ?, ?)"
             cur.execute(query, (sender, receiver, message))
-            response['result'] = 'success'
+            response['result'] = {
+                'message': 'success'}
         except Exception as e:
+            print(f"Ошибка при выполнении запроса: {e}")
             response['error'] = {
                 'code': -32001,
                 'message': f'Database operation failed: {str(e)}'
             }
         finally:
             db_close(conn, cur)
+
+        return jsonify(response)
 
     elif method == 'get_messages':
         sender = params.get('sender')
@@ -300,9 +310,86 @@ def api_message():
         finally:
             db_close(conn, cur)
 
-    return jsonify(response)
+        return jsonify(response)
 
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.pop('username', None)
-    return redirect('/rgz/logins')
+    elif method == 'get_message_id':
+        sender = params.get('sender')
+        receiver = params.get('receiver')
+        text = params.get('text')
+
+        print(f"Получены параметры: sender={sender}, receiver={receiver}, text={text}")
+
+        if not sender or not receiver or not text:
+            response['error'] = {
+                'code': 5,
+                'message': 'Необходимо указать отправителя, получателя и текст сообщения'
+            }
+            return jsonify(response)
+
+        conn, cur = db_connect()
+        if not conn:
+            response['error'] = {
+                'code': -32000,
+                'message': 'Database connection failed'
+            }
+            return jsonify(response)
+
+        try:
+            query = "SELECT id FROM messages WHERE sender = %s AND receiver = %s AND text = %s"
+            cur.execute(query, (sender, receiver, text))
+            result = cur.fetchone()
+
+            if result:
+                message_id = result['id']
+                response['result'] = {
+                    'message_id': message_id
+                }
+            else:
+                response['error'] = {
+                    'code': -32002,
+                    'message': 'Сообщение не найдено'
+                }
+        except Exception as e:
+            response['error'] = {
+                'code': -32001,
+                'message': f'Database operation failed: {str(e)}'
+            }
+        finally:
+            db_close(conn, cur)
+
+        return jsonify(response)
+
+    elif method == 'delete_message':
+        message_id = params.get('message_id')
+        if not message_id:
+            response['error'] = {
+                'code': 5,
+                'message': 'Необходимо указать идентификатор сообщения'
+            }
+            return jsonify(response)
+
+        conn, cur = db_connect()
+        if not conn:
+            response['error'] = {
+                'code': -32000,
+                'message': 'Database connection failed'
+            }
+            return jsonify(response)
+
+        try:
+            query = "DELETE FROM messages WHERE id = %s" if app.config['DB_TYPE'] == 'postgres' else \
+                    "DELETE FROM messages WHERE id = ?"
+            cur.execute(query, (message_id,))
+            conn.commit()
+            response['result'] = 'success'
+            print(f"Сообщение с id {message_id} успешно удалено")
+
+        except Exception as e:
+            response['error'] = {
+                'code': -32001,
+                'message': f'Database operation failed: {str(e)}'
+            }
+        finally:
+            db_close(conn, cur)
+
+    return jsonify(response)

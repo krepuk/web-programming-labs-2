@@ -63,6 +63,14 @@
             });
         }
 
+        function reloadChat(currentChatUser) {
+            fetchUsers();
+
+            if (currentChatUser) {
+                loadMessages(currentChatUser);
+            }
+        }
+
         function openChat(selectedUser) {
             currentChatUser = selectedUser; 
             const chatTitle = document.getElementById('chat-title');
@@ -101,53 +109,18 @@
                 console.error('Ошибка при загрузке сообщений:', error);
             });
         }
-        
-        function addMessageToChat(msg) {
-            const messagesContainer = document.getElementById('messages');
-            const div = document.createElement('div');
-            div.textContent = msg.text;
-        
-            if (msg.sender === '{{ username }}') {
-                div.style.textAlign = 'right';
-                div.style.backgroundColor = '#ffe9f4';
-            } else {
-                div.style.textAlign = 'left';
-                div.style.backgroundColor = '#cff0ec';
-            }
-        
-            div.style.padding = '10px';
-            div.style.marginBottom = '10px';
-            div.style.borderRadius = '10px';
-            messagesContainer.appendChild(div);
-        
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
 
-        function addMessageToChat(msg) {
-            const messagesContainer = document.getElementById('messages');
-            const div = document.createElement('div');
-            div.textContent = msg.text;
-
-            if (msg.sender === '{{ username }}') {
-                div.style.textAlign = 'right';
-                div.style.backgroundColor = '#d3f9d8';  
-            } else {
-                div.style.textAlign = 'left';
-                div.style.backgroundColor = '#f1f3f5';  
-            }
-
-            div.style.padding = '10px';
-            div.style.marginBottom = '10px';
-            div.style.borderRadius = '10px';
-            messagesContainer.appendChild(div);
-
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
 
         function sendMessage() {
-            const message = document.getElementById('message-input').value;
-            const selectedUser = currentChatUser; 
-
+            const message = document.getElementById('message-input').value.trim();
+            const selectedUser = currentChatUser;
+        
+            console.log('Получены данные для отправки сообщения:', {
+                sender: '{{ username }}',
+                receiver: selectedUser,
+                message: message
+            });
+        
             if (message && selectedUser) {
                 fetch('/json-rpc-api/messages', {
                     method: 'POST',
@@ -156,23 +129,24 @@
                     },
                     body: JSON.stringify({
                         jsonrpc: '2.0',
-                        method: 'send_message', 
-                        params: { 
-                            sender: '{{ username }}',  
-                            receiver: selectedUser,    
-                            message: message           
+                        method: 'send_message',
+                        params: {
+                            sender: '{{ username }}',
+                            receiver: selectedUser,
+                            message: message
                         },
                         id: 5
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.result) {
-                        document.getElementById('message-input').value = '';  
-                        addMessageToChat({
+                    console.log('Ответ сервера на send_message:', data);
+                    if (data.result.message === 'success') {
+                        const newMessage = {
                             sender: '{{ username }}',
                             text: message
-                        });
+                        };
+                        addMessageToChat(newMessage);
                     } else if (data.error) {
                         alert(data.error.message);
                     }
@@ -184,13 +158,6 @@
             }
         }
 
-        function reloadChat() {
-            fetchUsers();
-
-            if (currentChatUser) {
-                loadMessages(currentChatUser);
-            }
-        }
         document.addEventListener('DOMContentLoaded', () => {
             fetchUsers();
 
@@ -217,6 +184,140 @@
                 console.error('Ошибка при выходе из системы:', error);
             });
         });
+
+        function getMessageId(msg) {
+            console.log('Получены данные для getMessageId:', {
+                sender: msg.sender,
+                receiver: msg.receiver,
+                text: msg.text
+            });
+        
+            fetch('/json-rpc-api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'get_message_id',
+                    params: {
+                        sender: msg.sender,
+                        receiver: msg.receiver,
+                        text: msg.text
+                    },
+                    id: 6
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Ответ сервера на getMessageId:', data);
+                if (data.result && data.result.message_id) {
+                    const message_id = data.result.message_id;
+                    console.log('Получен message_id:', message_id);
+                    deleteMessageById(message_id);
+                } else if (data.error) {
+                    console.error('Ошибка при получении id сообщения:', data.error.message);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при получении id сообщения:', error);
+            });
+        }
+
+        function deleteMessageById(message_id) {
+            console.log('Получен message_id для удаления:', message_id);
+        
+            fetch('/json-rpc-api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'delete_message',
+                    params: {
+                        message_id: message_id
+                    },
+                    id: 7
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Ответ сервера на delete_message:', data);
+                if (data.result === 'success') {
+                    console.log('Сообщение успешно удалено');
+                    const messageElement = document.querySelector(`[data-message-id="${message_id}"]`);
+                    if (messageElement) {
+                        messageElement.remove();
+                    }
+                } else if (data.error) {
+                    console.error('Ошибка при удалении сообщения:', data.error.message);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при удалении сообщения:', error);
+            });
+        }
+        
+
+        function addMessageToChat(msg) {
+            const messagesContainer = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.textContent = msg.text;
+                
+            // Определяем, кто автор сообщения
+            if (msg.sender === '{{ username }}') {
+                div.style.textAlign = 'right';
+                div.style.backgroundColor = '#f9d3ec';
+                div.style.alignSelf = 'flex-end';
+            } else {
+                div.style.textAlign = 'left';
+                div.style.backgroundColor = '#def5ff';
+                div.style.alignSelf = 'flex-start';
+            }
+        
+            div.style.padding = '10px';
+            div.style.marginBottom = '10px';
+            div.style.borderRadius = '10px';
+            div.style.maxWidth = '70%';
+            div.style.wordWrap = 'break-word';
+            div.style.position = 'relative'; // Для позиционирования кнопки удаления
+
+            // Кнопка удаления
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Удалить';
+            deleteButton.style.position = 'absolute';
+            deleteButton.style.top = '5px';
+            deleteButton.style.right = '5px';
+            deleteButton.style.display = 'none'; // Скрываем кнопку по умолчанию
+            deleteButton.style.backgroundColor = '#fb95ff';
+            deleteButton.style.color = '#fff';
+            deleteButton.style.border = 'none';
+            deleteButton.style.borderRadius = '5px';
+            deleteButton.style.cursor = 'pointer';
+            deleteButton.style.transition = 'background-color 0.3s ease';
+        
+            // Показываем кнопку при наведении на сообщение
+            div.addEventListener('mouseenter', () => {
+                deleteButton.style.display = 'block';
+            });
+        
+            // Скрываем кнопку при уходе курсора с сообщения
+            div.addEventListener('mouseleave', () => {
+                deleteButton.style.display = 'none';
+            });
+        
+            // Обработчик удаления сообщения
+            deleteButton.addEventListener('click', () => {
+                getMessageId(msg);
+            });
+        
+            div.appendChild(deleteButton);
+            messagesContainer.appendChild(div);
+        
+            // Прокручиваем чат вниз, чтобы видеть последнее сообщение
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
 
     </script>
     {%endblock%}
