@@ -51,7 +51,7 @@ def messanger():
 @app.route('/logout', methods=['POST'])
 def logout():
     session.pop('username', None)
-    return redirect('/rgz/logins')
+    return jsonify({'message': 'Выход выполнен успешно'}), 200
 
 
 def db_connect():

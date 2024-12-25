@@ -203,14 +203,4 @@ button:hover {
     color: #ff00b7;
 }
 
-#logout-button{
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #cd48c2;
-        color: #fff;
-        text-decoration: none;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-}
+

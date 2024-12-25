@@ -166,25 +166,28 @@
             reloadChat();
         });
 
-        document.getElementById('logout-button').addEventListener('click', function() {
-            fetch('/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = '/rgz/logins'; 
-                } else {
-                    console.error('Ошибка при выходе из системы:', response.statusText);
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка при выходе из системы:', error);
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('logout-button').addEventListener('click', function() {
+                console.log('Нажата кнопка выхода');
+                fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/rgz/logins'; 
+                    } else {
+                        console.error('Ошибка при выходе из системы:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при выходе из системы:', error);
+                });
             });
-        });
-
+        });    
+                
         function getMessageId(msg) {
             console.log('Получены данные для getMessageId:', {
                 sender: msg.sender,
