@@ -21,6 +21,12 @@
         <div id="user-info">
             <h3>Добро пожаловать, <span id="username-display">{{ username }}</span></h3>
             <button id="logout-button">Выйти</button>
+            {% if is_admin %}
+            <h2>Администраторская панель</h2>
+            <div>
+                <button id="admin-button" onclick="window.location.href='/rgz/admin'">Удаление пользователей</button>
+            </div>
+            {% endif %}
         </div>
     </div>
 

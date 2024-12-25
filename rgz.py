@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, session
+from flask import Flask, request, jsonify, render_template, redirect, session, abort
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -43,9 +43,13 @@ def api_alias():
 @app.route('/rgz/messanger')
 def messanger():
     if 'username' in session:
-        return render_template('/rgz/messanger.html', username=session['username'])
+        return render_template(
+            '/rgz/messanger.html', 
+            username=session['username'], 
+            is_admin=session.get('is_admin', False)
+        )
     else:
-        return redirect('/rgz/logins')  
+        return redirect('/rgz/logins')
 
 
 @app.route('/logout', methods=['POST'])
@@ -149,6 +153,7 @@ def api():
                 'message': 'Введите логин и пароль'
             }
             return jsonify(response)
+        
 
         conn, cur = db_connect()
         if not conn:
@@ -173,6 +178,7 @@ def api():
                 stored_password = user['password']
                 if check_password_hash(stored_password, password):
                     session['username'] = user['login']
+                    session['is_admin'] = user.get('is_admin', False)
                     response['result'] = {
                         'message': 'Авторизация успешна'
                     }
@@ -391,5 +397,62 @@ def api_message():
             }
         finally:
             db_close(conn, cur)
-
     return jsonify(response)
+
+
+@app.route('/rgz/admin', methods=['GET'])
+def admin_page():
+
+    if 'username' not in session:
+        abort(401)  
+
+    if session['username'] != 'kitti666':
+        abort(403)  
+
+    return render_template('/rgz/admin.html')
+
+@app.route('/rgz/message')
+def message():
+    is_admin = session.get('username') == 'kitti666'
+
+    return render_template('rgz/message.html', is_admin=is_admin)
+
+
+@app.route('/admin/delete_user', methods=['POST'])
+def delete_user():
+    if 'username' not in session:
+        return jsonify({'error': 'Вы не авторизованы'}), 401
+
+    if session['username'] != 'kitti666':
+        return jsonify({'error': 'У вас нет прав на выполнение этого действия'}), 403
+
+    user_id = request.json.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'Не указан ID пользователя'}), 400
+
+    conn, cur = db_connect()
+    if not conn:
+        return jsonify({'error': 'Ошибка подключения к базе данных'}), 500
+
+    try:
+
+        query = "SELECT login FROM users WHERE id = %s" if app.config["DB_TYPE"] == 'postgres' else \
+                "SELECT login FROM users WHERE id = ?"
+        cur.execute(query, (user_id,))
+        user = cur.fetchone()
+
+        if not user:
+            return jsonify({'error': 'Пользователь не найден'}), 404
+
+        user_login = user['login']
+
+        delete_query = "DELETE FROM users WHERE id = %s" if app.config["DB_TYPE"] == 'postgres' else \
+                       "DELETE FROM users WHERE id = ?"
+        cur.execute(delete_query, (user_id,))
+        conn.commit()
+
+        return jsonify({'message': f'Пользователь {user_login} успешно удалён'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Ошибка операции: {str(e)}'}), 500
+    finally:
+        db_close(conn, cur)

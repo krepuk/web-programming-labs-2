@@ -1,0 +1,56 @@
+{% extends "base_rgz.html" %}
+
+{% block main %}
+    <h1 style="text-align: center;">Удаление пользователя</h1>
+    <form id="deleteUserForm" style="display: flex; flex-direction: column; align-items: center;">
+        <div style="margin-bottom: 10px;">
+            <label>
+                ID пользователя: <input type="number" id="user-id" name="user_id" style="margin-left: 10px;" required>
+            </label>
+        </div>
+        <button type="submit" style="margin-top: 10px;">Удалить</button>
+    </form>
+    <div id="statusMessage" style="text-align: center; margin-top: 10px;"></div>
+    <a href="/rgz/messanger" style="display: block; text-align: center; margin-top: 20px;">Назад</a>
+
+    {% block script %}
+    <script>
+        document.getElementById('deleteUserForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const userId = document.getElementById('user-id').value;
+
+            if (!userId) {
+                alert("Пожалуйста, введите ID пользователя.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/delete_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id: userId }),
+                });
+
+                const result = await response.json();
+
+                const statusMessage = document.getElementById('statusMessage');
+
+                if (response.ok) {
+                    statusMessage.textContent = result.message;
+                    statusMessage.style.color = 'green';
+                    document.getElementById('user-id').value = ''; 
+                } else {
+                    statusMessage.textContent = result.error || 'Ошибка при удалении пользователя.';
+                    statusMessage.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при выполнении запроса.');
+            }
+        });
+    </script>
+    {% endblock %}
+{% endblock %}
